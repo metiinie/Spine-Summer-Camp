@@ -1,0 +1,215 @@
+{
+  "en": {
+    "nav": {
+      "home": "Home",
+      "register": "Register",
+      "status": "Check Status",
+      "language": "EN"
+    },
+    "hero": {
+      "badge": "Summer 2026",
+      "title": "Spine Summer Camp",
+      "subtitle": "An unforgettable summer of learning, creativity, and fun for children ages 6–14.",
+      "dates": "July 8 – August 22, 2026",
+      "cta": "Register Now",
+      "checkStatus": "Check Registration Status"
+    },
+    "sessions": {
+      "title": "Choose Your Session",
+      "subtitle": "Two flexible options designed to fit your family's schedule",
+      "halfDay": {
+        "title": "Half Day",
+        "session": "Session 1",
+        "hours": "8:00 AM – 12:00 PM",
+        "features": ["Morning activities", "Arts & crafts", "Academic enrichment", "Snacks included"]
+      },
+      "fullDay": {
+        "title": "Full Day",
+        "session": "Session 2",
+        "hours": "8:00 AM – 4:00 PM",
+        "features": ["All half-day activities", "Afternoon workshops", "Lunch included", "Extended supervision"]
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about Spine Summer Camp",
+      "items": [
+        {
+          "question": "What age groups are accepted?",
+          "answer": "Spine Summer Camp accepts children between the ages of 6 and 14. We group campers by age to ensure age-appropriate activities."
+        },
+        {
+          "question": "What is the payment method?",
+          "answer": "Payment is made via CBE Birr transfer. After registering, you will receive bank account details and must upload your receipt to confirm enrollment."
+        },
+        {
+          "question": "What should my child bring?",
+          "answer": "Campers should bring a water bottle, a notebook, and any personal items they may need. A full list of required materials will be sent upon registration approval."
+        },
+        {
+          "question": "Can I register for both sessions?",
+          "answer": "Each child may only register for one session. If you have multiple children, you may register each child separately for different sessions."
+        },
+        {
+          "question": "How long does approval take?",
+          "answer": "After uploading your payment receipt, we review it within 24 hours and send a confirmation email to the parent's email address provided during registration."
+        }
+      ]
+    },
+    "register": {
+      "title": "Camp Registration",
+      "subtitle": "Complete the form below to register your child",
+      "steps": {
+        "camper": "Camper Info",
+        "parent": "Parent Info",
+        "session": "Session",
+        "medical": "Medical",
+        "review": "Review"
+      },
+      "camper": {
+        "title": "Camper Information",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "dateOfBirth": "Date of Birth",
+        "gender": "Gender",
+        "genderOptions": {
+          "MALE": "Male",
+          "FEMALE": "Female",
+          "OTHER": "Other"
+        },
+        "gradeLevel": "Grade Level",
+        "schoolName": "School Name",
+        "tShirtSize": "T-Shirt Size",
+        "tShirtOptions": {
+          "YOUTH_S": "Youth Small (S)",
+          "YOUTH_M": "Youth Medium (M)",
+          "YOUTH_L": "Youth Large (L)"
+        }
+      },
+      "parent": {
+        "title": "Parent / Guardian Information",
+        "primaryContact": "Primary Contact",
+        "secondaryContact": "Secondary Contact (Optional)",
+        "name": "Full Name",
+        "relationship": "Relationship",
+        "phone": "Phone Number",
+        "email": "Email Address",
+        "address": "Residential Address",
+        "subCity": "Sub-City",
+        "district": "Woreda / District",
+        "houseNumber": "House Number (Optional)"
+      },
+      "session": {
+        "title": "Select Your Session",
+        "subtitle": "Choose the session that works best for your family"
+      },
+      "medical": {
+        "title": "Medical Information",
+        "subtitle": "All fields are optional. Leave blank if not applicable.",
+        "allergies": "Allergies",
+        "allergiesPlaceholder": "List any food or environmental allergies",
+        "conditions": "Medical Conditions / Current Medications",
+        "conditionsPlaceholder": "Describe any medical conditions or medications the camp staff should know about",
+        "dietary": "Dietary Restrictions",
+        "dietaryPlaceholder": "e.g., vegetarian, halal, nut-free"
+      },
+      "review": {
+        "title": "Review Your Registration",
+        "subtitle": "Please review all information before submitting",
+        "camperInfo": "Camper Information",
+        "parentInfo": "Parent / Guardian",
+        "sessionInfo": "Session Details",
+        "medicalInfo": "Medical Information",
+        "none": "None"
+      },
+      "buttons": {
+        "next": "Next",
+        "back": "Back",
+        "submit": "Submit Registration",
+        "submitting": "Submitting..."
+      }
+    },
+    "payment": {
+      "title": "Complete Your Payment",
+      "referenceTitle": "Your Registration Reference",
+      "instructions": "Payment Instructions",
+      "bank": "Bank",
+      "accountNumber": "Account Number",
+      "accountName": "Account Name",
+      "amount": "Amount to Pay",
+      "uploadTitle": "Upload Payment Receipt",
+      "uploadSubtitle": "Drag & drop your CBE Birr receipt here, or click to browse",
+      "uploadFormats": "Accepts JPG, PNG, PDF (max 5MB)",
+      "uploading": "Uploading...",
+      "uploaded": "Receipt uploaded successfully!",
+      "uploadBtn": "Select File",
+      "confirmationNote": "We will review your payment and confirm your registration within 24 hours. A confirmation email will be sent to the address you provided.",
+      "importantNote": "Important: Make sure the exact amount is transferred. Include your reference number in the transfer memo if possible."
+    },
+    "status": {
+      "title": "Check Registration Status",
+      "subtitle": "Enter your email address or reference number to check your status",
+      "emailLabel": "Email Address or Reference Number",
+      "emailPlaceholder": "parent@email.com or SCAMP-2026-XXXXX",
+      "searchBtn": "Check Status",
+      "searching": "Searching...",
+      "notFound": "No registration found with that email or reference number.",
+      "timeline": {
+        "PENDING_PAYMENT": "Submitted",
+        "RECEIPT_UPLOADED": "Receipt Uploaded",
+        "UNDER_REVIEW": "Under Review",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      }
+    },
+    "admin": {
+      "login": {
+        "title": "Admin Login",
+        "subtitle": "Sign in to the Spine Camp administration panel",
+        "email": "Email Address",
+        "password": "Password",
+        "signIn": "Sign In",
+        "signingIn": "Signing in..."
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "totalRegistrations": "Total Registrations",
+        "pendingReview": "Pending Review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "exportCsv": "Export CSV"
+      },
+      "table": {
+        "no": "#",
+        "camperName": "Camper Name",
+        "parentName": "Parent Name",
+        "session": "Session",
+        "date": "Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "detail": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "rejectionReason": "Rejection Reason",
+        "rejectionPlaceholder": "Explain why this registration is being rejected...",
+        "adminNote": "Internal Note",
+        "notePlaceholder": "Add a private note visible only to admins...",
+        "saveNote": "Save Note",
+        "receiptPreview": "Payment Receipt"
+      }
+    },
+    "errors": {
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email address",
+      "invalidPhone": "Please enter a valid phone number",
+      "minLength": "Must be at least {min} characters"
+    },
+    "common": {
+      "loading": "Loading...",
+      "error": "An error occurred. Please try again.",
+      "success": "Success!",
+      "currency": "ETB"
+    }
+  }
+}

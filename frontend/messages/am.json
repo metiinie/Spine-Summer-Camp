@@ -1,0 +1,215 @@
+{
+  "en": {
+    "nav": {
+      "home": "መነሻ",
+      "register": "ይመዝገቡ",
+      "status": "ሁኔታ ያረጋግጡ",
+      "language": "አማ"
+    },
+    "hero": {
+      "badge": "ክረምት 2026",
+      "title": "ቀለም የክረምት ካምፕ",
+      "subtitle": "ከ6-14 ዓመት ለሚደርሱ ልጆች የማይረሳ የክረምት ጊዜ - ትምህርት፣ ፈጠራ እና ተዝናኖት።",
+      "dates": "ሐምሌ 1 – ነሐሴ 16, 2026",
+      "cta": "አሁን ይመዝገቡ",
+      "checkStatus": "የምዝገባ ሁኔታ ያረጋግጡ"
+    },
+    "sessions": {
+      "title": "ክፍለ ጊዜዎ ይምረጡ",
+      "subtitle": "ለቤተሰብዎ ፕሮግራም የሚስማማ ሁለት ተለዋዋጭ አማራጮች",
+      "halfDay": {
+        "title": "ግማሽ ቀን",
+        "session": "ክፍለ ጊዜ 1",
+        "hours": "ጥዋት 2:00 – ቀኑ 6:00",
+        "features": ["የጥዋት እንቅስቃሴዎች", "ጥበብ እና ዕደ-ጥበብ", "የትምህርት ማሻሻያ", "መክሰስ ይካተታል"]
+      },
+      "fullDay": {
+        "title": "ሙሉ ቀን",
+        "session": "ክፍለ ጊዜ 2",
+        "hours": "ጥዋት 2:00 – ከሰዓት 10:00",
+        "features": ["ሁሉም የግማሽ ቀን እንቅስቃሴዎች", "የከሰዓት ወርክሾፖች", "ምሳ ይካተታል", "የተራዘመ ቁጥጥር"]
+      }
+    },
+    "faq": {
+      "title": "ብዙ ጊዜ የሚጠየቁ ጥያቄዎች",
+      "subtitle": "ስለ ቀለም የክረምት ካምፕ ሁሉንም ማወቅ ያለቦትን",
+      "items": [
+        {
+          "question": "የትኛው የዕድሜ ቡድን ተቀባይነት አለው?",
+          "answer": "ቀለም የክረምት ካምፕ ከ6 እስከ 14 ዓመት ያሉ ልጆችን ይቀበላል። ዕድሜ-ተዛማጅ እንቅስቃሴዎችን ለማረጋገጥ ልጆቹን በዕድሜ ቡድን እናዋቅራቸዋለን።"
+        },
+        {
+          "question": "የክፍያ ዘዴ ምንድን ነው?",
+          "answer": "ክፍያ በCBE ብር ዝውውር ይደረጋል። ከተመዘገቡ በኋላ የባንክ ሂሳብ ዝርዝሮች ይደርሶዎታል እና ምዝገባዎ ለማረጋገጥ ደረሰኝዎን ማስጫን ያስፈልጋል።"
+        },
+        {
+          "question": "ልጄ ምን ማምጣት አለበት?",
+          "answer": "ተሳታፊዎች ውሃ ጠርሙስ፣ ማስታወሻ ደብተር እና ሊያስፈልጋቸው የሚችሉ የግል ዕቃዎችን ሊያመጡ ይገባል። አስፈላጊ ቁሳቁሶች ሙሉ ዝርዝር ምዝገባ ሲፈቀድ ይላካል።"
+        },
+        {
+          "question": "ለሁለቱ ክፍለ ጊዜዎች መመዝገብ ይቻላል?",
+          "answer": "እያንዳንዱ ልጅ ለአንድ ክፍለ ጊዜ ብቻ ሊመዘገብ ይችላል። ብዙ ልጆች ካሎዎ፣ እያንዳንዱን ልጅ ለተለያዩ ክፍለ ጊዜዎች በተናጠል ማስመዝገብ ይችላሉ።"
+        },
+        {
+          "question": "ፈቃድ ለማግኘት ምን ያህል ጊዜ ይወስዳል?",
+          "answer": "የክፍያ ደረሰኝ ካስጫኑ በኋላ ውስጥ 24 ሰዓታት ገምግመን፣ ምዝገባ ወቅት ለተሰጠ የወላጅ ኢሜይል አድራሻ ማረጋገጫ ኢሜይል እናሳካለን።"
+        }
+      ]
+    },
+    "register": {
+      "title": "የካምፕ ምዝገባ",
+      "subtitle": "ልጅዎን ለመመዝገብ ከዚህ በታች ያለውን ቅጽ ይሙሉ",
+      "steps": {
+        "camper": "የልጁ ዝርዝር",
+        "parent": "የወላጅ ዝርዝር",
+        "session": "ክፍለ ጊዜ",
+        "medical": "ሕክምናዊ",
+        "review": "ክለሳ"
+      },
+      "camper": {
+        "title": "የተሳታፊ መረጃ",
+        "firstName": "የመጀመሪያ ስም",
+        "lastName": "የአባት ስም",
+        "dateOfBirth": "የልደት ቀን",
+        "gender": "ጾታ",
+        "genderOptions": {
+          "MALE": "ወንድ",
+          "FEMALE": "ሴት",
+          "OTHER": "ሌላ"
+        },
+        "gradeLevel": "የክፍል ደረጃ",
+        "schoolName": "የትምህርት ቤት ስም",
+        "tShirtSize": "የቲሸርት መጠን",
+        "tShirtOptions": {
+          "YOUTH_S": "ጨቅላ ትንሽ (S)",
+          "YOUTH_M": "ጨቅላ መካከለኛ (M)",
+          "YOUTH_L": "ጨቅላ ትልቅ (L)"
+        }
+      },
+      "parent": {
+        "title": "የወላጅ / አሳዳጊ መረጃ",
+        "primaryContact": "ዋና እውቂያ",
+        "secondaryContact": "ሁለተኛ እውቂያ (አማራጭ)",
+        "name": "ሙሉ ስም",
+        "relationship": "ዝምድና",
+        "phone": "ስልክ ቁጥር",
+        "email": "ኢሜይል አድራሻ",
+        "address": "የመኖሪያ አድራሻ",
+        "subCity": "ክፍለ ከተማ",
+        "district": "ወረዳ",
+        "houseNumber": "የቤት ቁጥር (አማራጭ)"
+      },
+      "session": {
+        "title": "ክፍለ ጊዜዎ ይምረጡ",
+        "subtitle": "ለቤተሰብዎ ተስማሚ የሆነ ክፍለ ጊዜ ይምረጡ"
+      },
+      "medical": {
+        "title": "ሕክምናዊ መረጃ",
+        "subtitle": "ሁሉም መስኮች አማራጭ ናቸው። ካልተሠራ ባዶ ያቁሙ።",
+        "allergies": "አለርጂዎች",
+        "allergiesPlaceholder": "ማንኛቸውም የምግብ ወይም የአካባቢ አለርጂዎችን ዘርዝሩ",
+        "conditions": "ሕክምናዊ ሁኔታዎች / የአሁን መድሃኒቶች",
+        "conditionsPlaceholder": "ካምፕ ሠራተኞቹ ሊያውቁት የሚገባ ሕክምናዊ ሁኔታዎች ወይም መድሃኒቶችን ይግለጹ",
+        "dietary": "የአመጋገብ ገደቦች",
+        "dietaryPlaceholder": "ለምሳሌ፦채식주의, ሃላል, ያለ ለውዝ"
+      },
+      "review": {
+        "title": "ምዝገባዎን ይከልሱ",
+        "subtitle": "ከማስገባትዎ በፊት ሁሉንም መረጃ ይከልሱ",
+        "camperInfo": "የተሳታፊ መረጃ",
+        "parentInfo": "ወላጅ / አሳዳጊ",
+        "sessionInfo": "የክፍለ ጊዜ ዝርዝሮች",
+        "medicalInfo": "ሕክምናዊ መረጃ",
+        "none": "ምንም"
+      },
+      "buttons": {
+        "next": "ቀጣይ",
+        "back": "ተመለስ",
+        "submit": "ምዝገባ ያስገቡ",
+        "submitting": "በማስገባት ላይ..."
+      }
+    },
+    "payment": {
+      "title": "ክፍያዎን ያጠናቅቁ",
+      "referenceTitle": "የምዝገባ ቁጥርዎ",
+      "instructions": "የክፍያ መመሪያዎች",
+      "bank": "ባንክ",
+      "accountNumber": "የሂሳብ ቁጥር",
+      "accountName": "የሂሳብ ስም",
+      "amount": "መክፈል ያለበት ድምር",
+      "uploadTitle": "የክፍያ ደረሰኝ ያስጫኑ",
+      "uploadSubtitle": "የCBE ብር ደረሰኝዎን ወደዚህ ይጎትቱ ወይም ለምርጫ ጠቅ ያድርጉ",
+      "uploadFormats": "JPG, PNG, PDF (ከፍተኛ 5MB) ይቀበላል",
+      "uploading": "በማስጫን ላይ...",
+      "uploaded": "ደረሰኙ በተሳካ ሁኔታ ተጫኗል!",
+      "uploadBtn": "ፋይል ይምረጡ",
+      "confirmationNote": "ክፍያዎን ገምግመን ምዝገባዎን ውስጥ 24 ሰዓታት እናረጋግጣለን። ማረጋገጫ ኢሜይል ለሰጡት ኢሜይል አድራሻ ይላካል።",
+      "importantNote": "አስፈላጊ፦ ትክክለኛው ድምር መዘዋወሩን ያረጋግጡ። ከቻሉ የዝውውር ማስታወሻ ላይ የምዝገባ ቁጥርዎን ያካትቱ።"
+    },
+    "status": {
+      "title": "የምዝገባ ሁኔታ ያረጋግጡ",
+      "subtitle": "ሁኔታዎን ለማረጋገጥ ኢሜይል አድራሻዎ ወይም ቁጥርዎ ያስገቡ",
+      "emailLabel": "ኢሜይል አድራሻ ወይም ቁጥር",
+      "emailPlaceholder": "ኢሜይል@ምሳሌ.com ወይም SCAMP-2026-XXXXX",
+      "searchBtn": "ሁኔታ ያረጋግጡ",
+      "searching": "በፍለጋ ላይ...",
+      "notFound": "በዚያ ኢሜይል ወይም ቁጥር ምዝገባ አልተገኘም።",
+      "timeline": {
+        "PENDING_PAYMENT": "ቀርቧል",
+        "RECEIPT_UPLOADED": "ደረሰኝ ተጫኗል",
+        "UNDER_REVIEW": "በግምገማ ላይ",
+        "APPROVED": "ፈቅዷል",
+        "REJECTED": "ውድቅ ተደርጓል"
+      }
+    },
+    "admin": {
+      "login": {
+        "title": "የአስተዳዳሪ መግቢያ",
+        "subtitle": "ወደ ቀለም ካምፕ አስተዳደር ፓናል ይግቡ",
+        "email": "ኢሜይል አድራሻ",
+        "password": "የይለፍ ቃል",
+        "signIn": "ይግቡ",
+        "signingIn": "በመግባት ላይ..."
+      },
+      "dashboard": {
+        "title": "ዳሽቦርድ",
+        "totalRegistrations": "ጠቅላላ ምዝገባዎች",
+        "pendingReview": "ግምገማ በጠባይ",
+        "approved": "ፈቅዷል",
+        "rejected": "ውድቅ ተደርጓል",
+        "exportCsv": "CSV ወደ ውጭ ላክ"
+      },
+      "table": {
+        "no": "#",
+        "camperName": "የካምፕ ስም",
+        "parentName": "የወላጅ ስም",
+        "session": "ክፍለ ጊዜ",
+        "date": "ቀን",
+        "status": "ሁኔታ",
+        "actions": "ድርጊቶች"
+      },
+      "detail": {
+        "approve": "ፍቀድ",
+        "reject": "ውድቅ አድርግ",
+        "rejectionReason": "የውድቅ ምክንያት",
+        "rejectionPlaceholder": "ይህ ምዝገባ ለምን ውድቅ እንደሆነ ያብራሩ...",
+        "adminNote": "ውስጣዊ ማስታወሻ",
+        "notePlaceholder": "ለአስተዳዳሪዎች ብቻ የሚታይ የግል ማስታወሻ ያክሉ...",
+        "saveNote": "ማስታወሻ ያስቀምጡ",
+        "receiptPreview": "የክፍያ ደረሰኝ"
+      }
+    },
+    "errors": {
+      "required": "ይህ መስክ ያስፈልጋል",
+      "invalidEmail": "ትክክለኛ ኢሜይል አድራሻ ያስገቡ",
+      "invalidPhone": "ትክክለኛ ስልክ ቁጥር ያስገቡ",
+      "minLength": "ቢያንስ {min} ቁምፊዎች መሆን አለባቸው"
+    },
+    "common": {
+      "loading": "በመጫን ላይ...",
+      "error": "ስህተት ተፈጥሯል። እንደገና ይሞክሩ።",
+      "success": "ተሳካ!",
+      "currency": "ብር"
+    }
+  }
+}
