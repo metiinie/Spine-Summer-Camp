@@ -11,10 +11,10 @@ export const camperSchema = z.object({
     const age = Math.abs(ageDate.getUTCFullYear() - 1970);
     return age >= 4 && age <= 16;
   }, { message: "Age must be between 4 and 16 years old" }),
-  gender: z.enum(["MALE", "FEMALE"], { required_error: "Gender is required" }),
+  gender: z.enum(["MALE", "FEMALE"], { message: "Gender is required" }),
   gradeLevel: z.string().min(1, "Grade level is required"),
   schoolName: z.string().min(2, "School name is required"),
-  tShirtSize: z.enum(["YOUTH_S", "YOUTH_M", "YOUTH_L"], { required_error: "T-shirt size is required" }),
+  tShirtSize: z.enum(["YOUTH_S", "YOUTH_M", "YOUTH_L"], { message: "T-shirt size is required" }),
 });
 
 export const parentSchema = z.object({
@@ -31,7 +31,7 @@ export const parentSchema = z.object({
 });
 
 export const sessionSchema = z.object({
-  session: z.enum(["HALF_DAY", "FULL_DAY"], { required_error: "Please select a session" }),
+  session: z.enum(["HALF_DAY", "FULL_DAY"], { message: "Please select a session" }),
 });
 
 export const medicalSchema = z.object({
@@ -42,7 +42,7 @@ export const medicalSchema = z.object({
 
 export const waiverSchema = z.object({
   liabilityRelease: z.boolean().refine(val => val === true, "You must agree to the liability release"),
-  mediaRelease: z.enum(["true", "false"], { required_error: "Please specify your media release preference" }),
+  mediaRelease: z.enum(["true", "false"], { message: "Please specify your media release preference" }),
   parentSignature: z.string().min(2, "Parent/Guardian signature is required"),
   dateSigned: z.string().min(1, "Date is required"),
 });
