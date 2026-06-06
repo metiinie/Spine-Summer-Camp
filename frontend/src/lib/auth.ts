@@ -12,7 +12,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const res = await fetch("http://localhost:4000/auth/login", {
+          const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
+          const res = await fetch(`${backendUrl}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(credentials),

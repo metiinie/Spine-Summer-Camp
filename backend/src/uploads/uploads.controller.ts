@@ -22,7 +22,8 @@ export class UploadsController {
   async uploadFile(@UploadedFile() file: Express.Multer.File, @Body('registrationId') registrationId: string) {
     if (!file || !registrationId) throw new BadRequestException('Missing file or ID');
 
-    const receiptUrl = `http://localhost:4000/uploads/${file.filename}`;
+    const appUrl = process.env.APP_URL || 'http://localhost:4000';
+    const receiptUrl = `${appUrl}/uploads/${file.filename}`;
 
     const reg = await this.prisma.registration.update({
       where: { id: registrationId },
