@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { getRequestConfig } from "next-intl/server";
 
 const locales = ["en", "am"];
@@ -19,6 +18,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    messages: unwrappedMessages as any,
+    messages: unwrappedMessages as Record<string, string>,
   };
 });

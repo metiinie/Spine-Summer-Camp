@@ -7,9 +7,9 @@ export class RegistrationsService {
   constructor(private prisma: PrismaService) {}
 
   async create(body: any) {
-    const { camper, parent, session, medical } = body;
+    const { camper, parent, session, medical, waiver } = body;
     // Session pricing logic
-    const amount = session.session === 'HALF_DAY' ? 4000 : 7000;
+    const amount = session.session === 'HALF_DAY' ? 26000 : 40000;
     
     // Generate Ref
     const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 5);
@@ -53,6 +53,16 @@ export class RegistrationsService {
             dietary: medical?.dietary || null,
           },
         },
+        ...(waiver && {
+          waiver: {
+            create: {
+              liabilityRelease: waiver.liabilityRelease === true || waiver.liabilityRelease === 'true',
+              mediaRelease: waiver.mediaRelease === true || waiver.mediaRelease === 'true',
+              parentSignature: waiver.parentSignature,
+              dateSigned: waiver.dateSigned ? new Date(waiver.dateSigned) : new Date(),
+            },
+          },
+        }),
       },
     });
 
@@ -112,7 +122,7 @@ export class RegistrationsService {
     }
     return this.prisma.registration.findMany({
       where,
-      include: { camper: true, parent: true, medicalInfo: true },
+      include: { camper: true, parent: true, medicalInfo: true, waiver: true },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -143,7 +153,7 @@ export class RegistrationsService {
 
   async generateCsv() {
     const registrations = await this.prisma.registration.findMany({
-      include: { camper: true, parent: true, medicalInfo: true },
+      include: { camper: true, parent: true, medicalInfo: true, waiver: true },
       orderBy: { createdAt: "desc" },
     });
 
@@ -153,6 +163,7 @@ export class RegistrationsService {
       "Parent Name", "Relationship", "Phone", "Email",
       "Sub-City", "District", "House No.",
       "Allergies", "Conditions", "Dietary",
+      "Liability Release", "Media Release", "Parent Signature",
       "Submitted At"
     ];
 
@@ -166,6 +177,7 @@ export class RegistrationsService {
       r.parent?.primaryPhone || "", r.parent?.primaryEmail || "",
       r.parent?.subCity || "", r.parent?.district || "", r.parent?.houseNumber || "",
       r.medicalInfo?.allergies || "", r.medicalInfo?.conditions || "", r.medicalInfo?.dietary || "",
+      r.waiver?.liabilityRelease ? "Yes" : "No", r.waiver?.mediaRelease ? "Yes" : "No", r.waiver?.parentSignature || "",
       r.createdAt.toISOString(),
     ]);
 

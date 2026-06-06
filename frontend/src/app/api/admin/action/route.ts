@@ -1,53 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { z } from "zod";
 
-const approveSchema = z.object({
-  registrationId: z.string(),
-  action: z.enum(["approve", "reject"]),
-  rejectionReason: z.string().optional(),
-});
+const BACKEND = process.env.BACKEND_URL || "http://localhost:4000";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session?.user || !["ADMIN", "STAFF"].includes((session.user as any).role)) {
+  if (!session?.user || !(["ADMIN", "STAFF"] as string[]).includes((session.user as { role?: string }).role ?? "")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const parsed = approveSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid data" }, { status: 400 });
-  }
-
-  const { registrationId, action, rejectionReason } = parsed.data;
-
-  const newStatus = action === "approve" ? "APPROVED" : "REJECTED";
-  const registration = await prisma.registration.update({
-    where: { id: registrationId },
-    data: {
-      status: newStatus,
-      ...(action === "reject" && { rejectionReason }),
-    },
-    include: { parent: true, camper: true },
-  });
-
-  // Send email
   try {
-    const emailEndpoint = action === "approve" ? "approved" : "rejected";
-    await fetch(`${process.env.NEXTAUTH_URL}/api/emails/${emailEndpoint}`, {
+    const body = await req.json();
+    const res = await fetch(`${BACKEND}/admin/action`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: registration.parent?.primaryEmail,
-        name: registration.parent?.primaryName,
-        camperName: `${registration.camper?.firstName} ${registration.camper?.lastName}`,
-        referenceNumber: registration.referenceNumber,
-        rejectionReason,
-      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${(session as { accessToken?: string }).accessToken ?? ""}`,
+      },
+      body: JSON.stringify(body),
     });
-  } catch {}
+    const data = await res.json();
 
-  return NextResponse.json({ success: true, status: newStatus });
+    // Also send email via our own email routes (which use Resend)
+    if (res.ok) {
+      try {
+        const emailEndpoint = body.action === "approve" ? "approved" : "rejected";
+        // Fetch the registration info for the email
+        const regRes = await fetch(`${BACKEND}/registrations/${body.registrationId}`, { cache: "no-store" });
+        if (regRes.ok) {
+          const reg = await regRes.json();
+          await fetch(`${process.env.NEXTAUTH_URL}/api/emails/${emailEndpoint}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              to: reg.parent?.primaryEmail,
+              name: reg.parent?.primaryName,
+              camperName: `${reg.camper?.firstName} ${reg.camper?.lastName}`,
+              referenceNumber: reg.referenceNumber,
+              rejectionReason: body.rejectionReason,
+            }),
+          });
+        }
+      } catch {}
+    }
+
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("Admin action proxy error:", error);
+    return NextResponse.json({ error: "Failed to reach backend" }, { status: 502 });
+  }
 }

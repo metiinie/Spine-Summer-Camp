@@ -1,33 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+
+const BACKEND = process.env.BACKEND_URL || "http://localhost:4000";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
-  if (!session?.user || !["ADMIN", "STAFF"].includes((session.user as any).role)) {
+  if (!session?.user || !(["ADMIN", "STAFF"] as string[]).includes((session.user as { role?: string }).role ?? "")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);
-  const status = searchParams.get("status");
-  const search = searchParams.get("search") || "";
+  const params = searchParams.toString();
 
-  const where: any = {};
-  if (status && status !== "all") where.status = status.toUpperCase();
-  if (search) {
-    where.OR = [
-      { camper: { firstName: { contains: search } } },
-      { camper: { lastName: { contains: search } } },
-      { parent: { primaryName: { contains: search } } },
-      { referenceNumber: { contains: search } },
-    ];
+  try {
+    const res = await fetch(`${BACKEND}/admin/registrations${params ? `?${params}` : ""}`, {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${(session as { accessToken?: string }).accessToken ?? ""}`,
+      },
+    });
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("Admin registrations proxy error:", error);
+    return NextResponse.json({ error: "Failed to reach backend" }, { status: 502 });
   }
-
-  const registrations = await prisma.registration.findMany({
-    where,
-    include: { camper: true, parent: true, medicalInfo: true },
-    orderBy: { createdAt: "desc" },
-  });
-
-  return NextResponse.json(registrations);
 }

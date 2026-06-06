@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Sun,
   Star,
@@ -9,7 +10,11 @@ import {
   ArrowRight,
   CheckCircle2,
   Sparkles,
+  QrCode,
+  Phone,
+  Gift
 } from "lucide-react";
+import { FirstVisitRedirect } from "@/components/FirstVisitRedirect";
 
 interface HomePageProps {
   params: { locale: string };
@@ -25,7 +30,8 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
   const faqItems: { question: string; answer: string }[] = tFaq.raw("items") as { question: string; answer: string }[];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50">
+    <main className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+      <FirstVisitRedirect />
       {/* Hero */}
       <section className="relative pt-28 pb-24 overflow-hidden">
         {/* Background blobs */}
@@ -33,19 +39,19 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
         <div className="absolute top-20 -right-20 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: "1s" }} />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100 text-sky-700 text-sm font-semibold mb-6 border border-sky-200">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300 text-sm font-semibold mb-6 border border-sky-200 dark:border-sky-800">
             <Sparkles className="w-4 h-4" />
             {t("badge")}
           </div>
 
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 mb-6 leading-tight tracking-tight">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-slate-100 mb-6 leading-tight tracking-tight">
             {t("title").split(" ").slice(0, -1).join(" ")}{" "}
             <span className="bg-gradient-to-r from-sky-500 to-emerald-500 bg-clip-text text-transparent">
               {t("title").split(" ").slice(-1)[0]}
             </span>
           </h1>
 
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-4 leading-relaxed">
+          <p className="text-xl text-slate-600 dark:text-slate-400 dark:text-slate-500 max-w-2xl mx-auto mb-4 leading-relaxed">
             {t("subtitle")}
           </p>
 
@@ -64,7 +70,7 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
             </Link>
             <Link
               href={`/status`}
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white text-slate-700 text-lg font-semibold border-2 border-slate-200 hover:border-sky-300 hover:text-sky-600 transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-lg font-semibold border-2 border-slate-200 dark:border-slate-700 hover:border-sky-300 hover:text-sky-600 transition-all duration-200"
             >
               {t("checkStatus")}
             </Link>
@@ -73,15 +79,15 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
 
         {/* Scroll indicator */}
         <div className="flex justify-center mt-16 animate-bounce">
-          <ChevronDown className="w-6 h-6 text-slate-400" />
+          <ChevronDown className="w-6 h-6 text-slate-400 dark:text-slate-500" />
         </div>
       </section>
 
       {/* Stats bar */}
-      <section className="py-8 bg-white border-y border-slate-100">
+      <section className="py-8 bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-3 gap-6 text-center">
           {[
-            { icon: Users, label: "Ages 6–14", value: "All Welcome" },
+            { icon: Users, label: "Ages 4–16", value: "All Welcome" },
             { icon: Clock, label: "6 Weeks", value: "July–August" },
             { icon: Star, label: "Activities", value: "20+ Daily" },
           ].map(({ icon: Icon, label, value }) => (
@@ -89,10 +95,31 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
               <div className="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center mb-1">
                 <Icon className="w-5 h-5 text-sky-500" />
               </div>
-              <p className="text-2xl font-bold text-slate-800">{value}</p>
-              <p className="text-sm text-slate-500">{label}</p>
+              <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{value}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">{label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Organizers & Partners */}
+      <section className="py-12 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-8">
+            Brought to you by
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-16">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-all hover:-translate-y-1">
+              <div className="relative w-32 h-20 sm:w-48 sm:h-24">
+                <Image src="/logo-1.png" alt="Spine Consultancy" fill className="object-contain" />
+              </div>
+            </div>
+            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-all hover:-translate-y-1">
+              <div className="relative w-32 h-20 sm:w-48 sm:h-24">
+                <Image src="/logo-2.png" alt="Ghion Hotel" fill className="object-contain" />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -100,29 +127,29 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
       <section className="py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-3">
               {tSessions("title")}
             </h2>
-            <p className="text-slate-500 text-lg">{tSessions("subtitle")}</p>
+            <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 text-lg">{tSessions("subtitle")}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Half Day */}
-            <div className="group relative bg-white rounded-3xl p-8 border-2 border-transparent hover:border-sky-300 shadow-md hover:shadow-xl transition-all duration-300">
+            <div className="group relative bg-white dark:bg-slate-900 rounded-3xl p-8 border-2 border-transparent hover:border-sky-300 shadow-md hover:shadow-xl transition-all duration-300">
               <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 text-sky-700 text-sm font-semibold mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300 text-sm font-semibold mb-4">
                   <Sun className="w-3.5 h-3.5" />
                   {tSessions("halfDay.session")}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-1">{tSessions("halfDay.title")}</h3>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">{tSessions("halfDay.title")}</h3>
                 <p className="text-sky-600 font-semibold mb-1">{tSessions("halfDay.hours")}</p>
-                <p className="text-3xl font-extrabold text-slate-900 mb-6">
-                  4,500 <span className="text-lg font-semibold text-slate-500">ETB</span>
+                <p className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-6">
+                  {tSessions("halfDay.price")} <span className="text-lg font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500">ETB</span>
                 </p>
                 <ul className="space-y-3 mb-8">
                   {halfDayFeatures.map((f: string) => (
-                    <li key={f} className="flex items-center gap-3 text-slate-600">
+                    <li key={f} className="flex items-center gap-3 text-slate-600 dark:text-slate-400 dark:text-slate-500">
                       <CheckCircle2 className="w-5 h-5 text-sky-500 flex-shrink-0" />
                       {f}
                     </li>
@@ -139,7 +166,7 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
 
             {/* Full Day */}
             <div className="group relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 border-2 border-emerald-400/30 hover:border-emerald-400 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-emerald-400 text-slate-900 text-xs font-bold">
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-emerald-400 text-slate-900 dark:text-slate-100 text-xs font-bold">
                 Most Popular
               </div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-900/50 text-emerald-400 text-sm font-semibold mb-4">
@@ -149,7 +176,7 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
               <h3 className="text-2xl font-bold text-white mb-1">{tSessions("fullDay.title")}</h3>
               <p className="text-emerald-400 font-semibold mb-1">{tSessions("fullDay.hours")}</p>
               <p className="text-3xl font-extrabold text-white mb-6">
-                7,500 <span className="text-lg font-semibold text-slate-400">ETB</span>
+                {tSessions("fullDay.price")} <span className="text-lg font-semibold text-slate-400 dark:text-slate-500">ETB</span>
               </p>
               <ul className="space-y-3 mb-8">
                 {fullDayFeatures.map((f: string) => (
@@ -167,29 +194,67 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
               </Link>
             </div>
           </div>
+
+          {/* Discounts & QR Code */}
+          <div className="mt-12 bg-white dark:bg-slate-900 rounded-3xl p-8 border-2 border-slate-100 dark:border-slate-800 shadow-lg">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 text-sm font-semibold mb-4">
+                  <Gift className="w-4 h-4" />
+                  {tSessions("discounts.title")}
+                </div>
+                <ul className="space-y-4">
+                  <li className="flex items-center gap-3 text-lg font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="w-2 h-2 rounded-full bg-rose-500" />
+                    {tSessions("discounts.twoKids")}
+                  </li>
+                  <li className="flex items-center gap-3 text-lg font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="w-2 h-2 rounded-full bg-rose-500" />
+                    {tSessions("discounts.threeKids")}
+                  </li>
+                  <li className="flex items-center gap-3 text-lg font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="w-2 h-2 rounded-full bg-rose-500" />
+                    {tSessions("discounts.fiveKids")}
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="flex flex-col items-center p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
+                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-4">
+                  Scan to watch video
+                </p>
+                <div className="bg-white p-2 rounded-xl shadow-sm mb-2">
+                  <Image src="/qrcode.png" alt="Scan to watch video" width={120} height={120} className="object-contain" />
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Spine Summer Camp
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-3">
               {tFaq("title")}
             </h2>
-            <p className="text-slate-500 text-lg">{tFaq("subtitle")}</p>
+            <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 text-lg">{tFaq("subtitle")}</p>
           </div>
           <div className="space-y-4">
             {faqItems.map((item, idx) => (
               <details
                 key={idx}
-                className="group rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden"
+                className="group rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 overflow-hidden"
               >
-                <summary className="flex items-center justify-between px-6 py-5 cursor-pointer font-semibold text-slate-800 select-none list-none">
+                <summary className="flex items-center justify-between px-6 py-5 cursor-pointer font-semibold text-slate-800 dark:text-slate-100 select-none list-none">
                   {item.question}
-                  <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-4" />
+                  <ChevronDown className="w-5 h-5 text-slate-400 dark:text-slate-500 group-open:rotate-180 transition-transform flex-shrink-0 ml-4" />
                 </summary>
-                <p className="px-6 pb-5 text-slate-600 leading-relaxed border-t border-slate-200 pt-4">
+                <p className="px-6 pb-5 text-slate-600 dark:text-slate-400 dark:text-slate-500 leading-relaxed border-t border-slate-200 dark:border-slate-700 pt-4">
                   {item.answer}
                 </p>
               </details>
@@ -209,7 +274,7 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
           </p>
           <Link
             href={`/register`}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-sky-600 text-lg font-bold hover:scale-105 transition-transform shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white dark:bg-slate-900 text-sky-600 text-lg font-bold hover:scale-105 transition-transform shadow-lg"
           >
             {t("cta")}
             <ArrowRight className="w-5 h-5" />
@@ -218,7 +283,17 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-10 text-center text-sm">
+      <footer className="bg-slate-900 text-slate-400 dark:text-slate-500 py-10 text-center text-sm">
+        <div className="flex justify-center items-center gap-6 mb-4">
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4" />
+            <span>0995173291</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4" />
+            <span>0995172939</span>
+          </div>
+        </div>
         <p>© 2026 Spine Summer Camp. All rights reserved.</p>
         <p className="mt-1">Addis Ababa, Ethiopia</p>
       </footer>

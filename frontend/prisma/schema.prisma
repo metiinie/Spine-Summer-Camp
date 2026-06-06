@@ -31,6 +31,7 @@ model Registration {
   camper      Camper?
   parent      Parent?
   medicalInfo MedicalInfo?
+  waiver      Waiver?
 }
 
 model Camper {
@@ -69,4 +70,14 @@ model MedicalInfo {
   allergies      String?
   conditions     String?
   dietary        String?
+}
+
+model Waiver {
+  id                    String       @id @default(cuid())
+  registrationId        String       @unique
+  registration          Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  liabilityRelease      Boolean
+  mediaRelease          Boolean
+  parentSignature       String
+  dateSigned            DateTime     @default(now())
 }

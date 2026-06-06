@@ -50,8 +50,8 @@ export function PaymentClient({ registration }: PaymentClientProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload failed");
       setUploaded(true);
-    } catch (err: any) {
-      setError(err.message || "Upload failed. Please try again.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
