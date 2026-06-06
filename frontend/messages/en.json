@@ -2,7 +2,7 @@
   "en": {
     "nav": {
       "home": "Home",
-      "activities": "Activities",
+      "activities": "About Us",
       "register": "Register",
       "status": "Check Status",
       "language": "EN"
@@ -66,8 +66,17 @@
       ]
     },
     "activitiesPage": {
-      "title": "Camp Activities",
-      "subtitle": "Discover the fun and educational activities we have planned for your children.",
+      "title": "About Us",
+      "subtitle": "Discover everything you need to know about Spine Summer Camp.",
+      "info": {
+        "location": "Ghion Hotel",
+        "dates": "July 1 - August 15",
+        "ages": "4 to 16 years old",
+        "contact": "0995173291 / 0995172939",
+        "packages": "Half Day (26,000 BIRR)\nFull Day (40,000 BIRR)",
+        "discounts": "2 Kids (20% off)\n3 Kids (40% off)\n5 Kids (1 Free)"
+      },
+      "programsTitle": "Our Programs",
       "items": [
         {
           "title": "Swimming",

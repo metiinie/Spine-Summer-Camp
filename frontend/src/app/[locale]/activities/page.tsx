@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import { Sparkles } from "lucide-react";
+import { Sparkles, MapPin, Calendar, Users, Phone, Tag } from "lucide-react";
 
 export default async function ActivitiesPage({ params: { locale } }: { params: { locale: string } }) {
   const t = await getTranslations({ locale, namespace: "activitiesPage" });
@@ -21,6 +21,77 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             {t("subtitle")}
           </p>
+        </div>
+
+        {/* Camp Info Section */}
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 mb-16 shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-sky-100 dark:bg-sky-900/50 rounded-xl text-sky-600 dark:text-sky-400">
+                <MapPin className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Location</h3>
+                <p className="text-slate-600 dark:text-slate-400">{t("info.location")}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-sky-100 dark:bg-sky-900/50 rounded-xl text-sky-600 dark:text-sky-400">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Dates</h3>
+                <p className="text-slate-600 dark:text-slate-400">{t("info.dates")}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-sky-100 dark:bg-sky-900/50 rounded-xl text-sky-600 dark:text-sky-400">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Ages</h3>
+                <p className="text-slate-600 dark:text-slate-400">{t("info.ages")}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-sky-100 dark:bg-sky-900/50 rounded-xl text-sky-600 dark:text-sky-400">
+                <Phone className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Contact</h3>
+                <p className="text-slate-600 dark:text-slate-400">{t("info.contact")}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-sky-100 dark:bg-sky-900/50 rounded-xl text-sky-600 dark:text-sky-400">
+                <Tag className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Packages</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-xs whitespace-pre-line">{t("info.packages")}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-sky-100 dark:bg-sky-900/50 rounded-xl text-sky-600 dark:text-sky-400">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Discounts</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-xs whitespace-pre-line">{t("info.discounts")}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+            {t("programsTitle")}
+          </h2>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">

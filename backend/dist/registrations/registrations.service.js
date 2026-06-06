@@ -33,6 +33,7 @@ let RegistrationsService = class RegistrationsService {
                     create: {
                         firstName: camper.firstName,
                         lastName: camper.lastName,
+                        age: camper.age,
                         dateOfBirth: new Date(camper.dateOfBirth),
                         gender: camper.gender,
                         gradeLevel: camper.gradeLevel,

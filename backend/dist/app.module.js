@@ -8,13 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
-const serve_static_1 = require("@nestjs/serve-static");
-const path_1 = require("path");
 const auth_module_1 = require("./auth/auth.module");
 const registrations_module_1 = require("./registrations/registrations.module");
 const uploads_controller_1 = require("./uploads/uploads.controller");
 const emails_service_1 = require("./emails/emails.service");
 const prisma_service_1 = require("./prisma.service");
+const app_controller_1 = require("./app.controller");
+const app_service_1 = require("./app.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -23,12 +23,9 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             auth_module_1.AuthModule,
             registrations_module_1.RegistrationsModule,
-            serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.join)(__dirname, '..', 'public'),
-            }),
         ],
-        controllers: [uploads_controller_1.UploadsController],
-        providers: [emails_service_1.EmailsService, prisma_service_1.PrismaService],
+        controllers: [uploads_controller_1.UploadsController, app_controller_1.AppController],
+        providers: [emails_service_1.EmailsService, prisma_service_1.PrismaService, app_service_1.AppService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

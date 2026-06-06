@@ -213,7 +213,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Date of Birth *</label>
                   <input
@@ -223,6 +223,18 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   />
                   {camperForm.formState.errors.dateOfBirth && (
                     <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.dateOfBirth.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Age *</label>
+                  <input
+                    type="number"
+                    {...camperForm.register("age")}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
+                    placeholder="e.g. 10"
+                  />
+                  {camperForm.formState.errors.age && (
+                    <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.age.message}</p>
                   )}
                 </div>
                 <div>
@@ -519,6 +531,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
               <div className="space-y-4">
                 <Section title="Camper Information">
                   <Row label="Name" value={`${formData.camper.firstName} ${formData.camper.lastName}`} />
+                  <Row label="Age" value={String(formData.camper.age)} />
                   <Row label="Date of Birth" value={formData.camper.dateOfBirth} />
                   <Row label="Gender" value={formData.camper.gender} />
                   <Row label="Grade" value={formData.camper.gradeLevel} />

@@ -11,6 +11,7 @@ export declare class RegistrationsService {
             id: string;
             firstName: string;
             lastName: string;
+            age: number;
             dateOfBirth: Date;
             gender: string;
             gradeLevel: string;
@@ -20,15 +21,15 @@ export declare class RegistrationsService {
         } | null;
     } & {
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        session: string;
         referenceNumber: string;
         status: string;
+        session: string;
         amount: import("@prisma/client/runtime/library").Decimal;
         receiptUrl: string | null;
         adminNote: string | null;
         rejectionReason: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     checkStatus(q: string): Promise<{
         referenceNumber: string;
@@ -47,6 +48,7 @@ export declare class RegistrationsService {
             id: string;
             firstName: string;
             lastName: string;
+            age: number;
             dateOfBirth: Date;
             gender: string;
             gradeLevel: string;
@@ -85,15 +87,15 @@ export declare class RegistrationsService {
         } | null;
     } & {
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        session: string;
         referenceNumber: string;
         status: string;
+        session: string;
         amount: import("@prisma/client/runtime/library").Decimal;
         receiptUrl: string | null;
         adminNote: string | null;
         rejectionReason: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     })[]>;
     approveOrReject(registrationId: string, action: string, rejectionReason?: string): Promise<{
         success: boolean;

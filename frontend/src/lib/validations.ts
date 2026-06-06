@@ -3,6 +3,7 @@ import { z } from "zod";
 export const camperSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  age: z.coerce.number({ invalid_type_error: "Age must be a number" }).min(4, "Age must be at least 4").max(16, "Age must be at most 16"),
   dateOfBirth: z.string().min(1, "Date of birth is required").refine((val) => {
     const dob = new Date(val);
     if (isNaN(dob.getTime())) return false;
