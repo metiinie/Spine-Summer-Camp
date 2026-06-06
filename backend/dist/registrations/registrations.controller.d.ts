@@ -32,15 +32,15 @@ export declare class RegistrationsController {
         } | null;
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        session: string;
         referenceNumber: string;
         status: string;
-        session: string;
         amount: import("@prisma/client/runtime/library").Decimal;
         receiptUrl: string | null;
         adminNote: string | null;
         rejectionReason: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     getRegistrations(status?: string, search?: string): Promise<({
         camper: {
@@ -85,15 +85,15 @@ export declare class RegistrationsController {
         } | null;
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        session: string;
         referenceNumber: string;
         status: string;
-        session: string;
         amount: import("@prisma/client/runtime/library").Decimal;
         receiptUrl: string | null;
         adminNote: string | null;
         rejectionReason: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     })[]>;
     approveOrReject(body: any): Promise<{
         success: boolean;

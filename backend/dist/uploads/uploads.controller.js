@@ -28,7 +28,8 @@ let UploadsController = class UploadsController {
     async uploadFile(file, registrationId) {
         if (!file || !registrationId)
             throw new common_1.BadRequestException('Missing file or ID');
-        const receiptUrl = `http://localhost:4000/uploads/${file.filename}`;
+        const appUrl = process.env.APP_URL || 'http://localhost:4000';
+        const receiptUrl = `${appUrl}/uploads/${file.filename}`;
         const reg = await this.prisma.registration.update({
             where: { id: registrationId },
             data: { receiptUrl, status: 'RECEIPT_UPLOADED' },
