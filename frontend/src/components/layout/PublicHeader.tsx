@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-import { Globe, Menu, X, Sun } from "lucide-react";
+import { Globe, Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface PublicHeaderProps {

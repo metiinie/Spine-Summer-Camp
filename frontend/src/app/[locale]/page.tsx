@@ -10,7 +10,6 @@ import {
   ArrowRight,
   CheckCircle2,
   Sparkles,
-  QrCode,
   Phone,
   Gift
 } from "lucide-react";
