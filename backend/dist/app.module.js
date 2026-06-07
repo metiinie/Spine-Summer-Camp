@@ -8,6 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const throttler_1 = require("@nestjs/throttler");
+const core_1 = require("@nestjs/core");
 const auth_module_1 = require("./auth/auth.module");
 const registrations_module_1 = require("./registrations/registrations.module");
 const uploads_controller_1 = require("./uploads/uploads.controller");
@@ -15,17 +17,29 @@ const emails_service_1 = require("./emails/emails.service");
 const prisma_service_1 = require("./prisma.service");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const logger_middleware_1 = require("./common/middleware/logger.middleware");
+const audit_service_1 = require("./common/audit/audit.service");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer.apply(logger_middleware_1.LoggerMiddleware).forRoutes('*');
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            throttler_1.ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
             auth_module_1.AuthModule,
             registrations_module_1.RegistrationsModule,
         ],
         controllers: [uploads_controller_1.UploadsController, app_controller_1.AppController],
-        providers: [emails_service_1.EmailsService, prisma_service_1.PrismaService, app_service_1.AppService],
+        providers: [
+            { provide: core_1.APP_GUARD, useClass: throttler_1.ThrottlerGuard },
+            emails_service_1.EmailsService,
+            prisma_service_1.PrismaService,
+            app_service_1.AppService,
+            audit_service_1.AuditService,
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

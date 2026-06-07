@@ -17,10 +17,14 @@ const prisma_service_1 = require("../prisma.service");
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
     prisma;
     constructor(prisma) {
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error('JWT_SECRET environment variable is not set');
+        }
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: process.env.JWT_SECRET || 'super-secret-jwt-key',
+            secretOrKey: secret,
         });
         this.prisma = prisma;
     }
@@ -28,7 +32,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
         if (!user)
             throw new common_1.UnauthorizedException();
-        return { userId: payload.sub, email: payload.email, role: payload.role };
+        return { userId: payload.sub, email: payload.email, role: user.role };
     }
 };
 exports.JwtStrategy = JwtStrategy;

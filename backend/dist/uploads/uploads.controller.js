@@ -16,24 +16,37 @@ exports.UploadsController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
+const crypto_1 = require("crypto");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const prisma_service_1 = require("../prisma.service");
 const emails_service_1 = require("../emails/emails.service");
+const audit_service_1 = require("../common/audit/audit.service");
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
 let UploadsController = class UploadsController {
     prisma;
     emails;
-    constructor(prisma, emails) {
+    audit;
+    constructor(prisma, emails, audit) {
         this.prisma = prisma;
         this.emails = emails;
+        this.audit = audit;
     }
-    async uploadFile(file, registrationId) {
+    async uploadFile(file, registrationId, req) {
         if (!file || !registrationId)
-            throw new common_1.BadRequestException('Missing file or ID');
+            throw new common_1.BadRequestException('Missing file or registration ID');
         const appUrl = process.env.APP_URL || 'http://localhost:4000';
         const receiptUrl = `${appUrl}/uploads/${file.filename}`;
         const reg = await this.prisma.registration.update({
             where: { id: registrationId },
             data: { receiptUrl, status: 'RECEIPT_UPLOADED' },
-            include: { parent: true }
+            include: { parent: true },
+        });
+        const user = req.user;
+        await this.audit.log({
+            action: 'RECEIPT_UPLOADED',
+            performedBy: user?.userId ?? 'system',
+            registrationId,
         });
         if (reg.parent?.primaryEmail) {
             await this.emails.sendReceiptReceived(reg.parent.primaryEmail, reg.parent.primaryName, reg.referenceNumber);
@@ -43,25 +56,35 @@ let UploadsController = class UploadsController {
 };
 exports.UploadsController = UploadsController;
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
         storage: (0, multer_1.diskStorage)({
             destination: './public/uploads',
-            filename: (req, file, cb) => {
-                const ext = file.originalname.split('.').pop();
-                cb(null, `receipt-${Date.now()}.${ext}`);
-            }
+            filename: (_req, _file, cb) => {
+                cb(null, `receipt-${(0, crypto_1.randomUUID)()}`);
+            },
         }),
-        limits: { fileSize: 5 * 1024 * 1024 }
+        limits: { fileSize: 5 * 1024 * 1024 },
+        fileFilter: (_req, file, cb) => {
+            const ext = file.originalname.split('.').pop()?.toLowerCase() ?? '';
+            if (!ALLOWED_MIME_TYPES.includes(file.mimetype) || !ALLOWED_EXTENSIONS.includes(ext)) {
+                return cb(new common_1.BadRequestException('Only JPEG, PNG, WebP, and PDF files are allowed'), false);
+            }
+            cb(null, true);
+        },
     })),
     __param(0, (0, common_1.UploadedFile)()),
     __param(1, (0, common_1.Body)('registrationId')),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, String, Object]),
     __metadata("design:returntype", Promise)
 ], UploadsController.prototype, "uploadFile", null);
 exports.UploadsController = UploadsController = __decorate([
     (0, common_1.Controller)('upload-receipt'),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService, emails_service_1.EmailsService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        emails_service_1.EmailsService,
+        audit_service_1.AuditService])
 ], UploadsController);
 //# sourceMappingURL=uploads.controller.js.map

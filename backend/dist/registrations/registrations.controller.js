@@ -14,8 +14,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegistrationsController = void 0;
 const common_1 = require("@nestjs/common");
+const throttler_1 = require("@nestjs/throttler");
 const registrations_service_1 = require("./registrations.service");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+const roles_guard_1 = require("../auth/roles.guard");
+const roles_decorator_1 = require("../auth/roles.decorator");
+const create_registration_dto_1 = require("./dto/create-registration.dto");
+const find_all_query_dto_1 = require("./dto/find-all-query.dto");
+const admin_action_dto_1 = require("./dto/admin-action.dto");
 let RegistrationsController = class RegistrationsController {
     regService;
     constructor(regService) {
@@ -30,17 +36,20 @@ let RegistrationsController = class RegistrationsController {
     getRegistration(id) {
         return this.regService.findOne(id);
     }
-    getRegistrations(status, search) {
-        return this.regService.findAll(status, search);
+    getRegistrations(query) {
+        return this.regService.findAll(query);
     }
-    approveOrReject(body) {
-        return this.regService.approveOrReject(body.registrationId, body.action, body.rejectionReason);
+    approveOrReject(body, req) {
+        const user = req.user;
+        return this.regService.approveOrReject(body, user.userId);
     }
-    saveAdminNote(body) {
-        return this.regService.saveNote(body.registrationId, body.adminNote);
+    saveAdminNote(body, req) {
+        const user = req.user;
+        return this.regService.saveNote(body, user.userId);
     }
-    async exportCsv(res) {
-        const csv = await this.regService.generateCsv();
+    async exportCsv(res, req) {
+        const user = req.user;
+        const csv = await this.regService.generateCsvData(user.userId);
         res.header('Content-Type', 'text/csv');
         res.header('Content-Disposition', `attachment; filename="registrations-${Date.now()}.csv"`);
         res.send(csv);
@@ -48,13 +57,15 @@ let RegistrationsController = class RegistrationsController {
 };
 exports.RegistrationsController = RegistrationsController;
 __decorate([
+    (0, throttler_1.Throttle)({ default: { ttl: 60000, limit: 10 } }),
     (0, common_1.Post)('registrations'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [create_registration_dto_1.CreateRegistrationDto]),
     __metadata("design:returntype", void 0)
 ], RegistrationsController.prototype, "createRegistration", null);
 __decorate([
+    (0, throttler_1.Throttle)({ default: { ttl: 60000, limit: 20 } }),
     (0, common_1.Get)('registrations/status'),
     __param(0, (0, common_1.Query)('q')),
     __metadata("design:type", Function),
@@ -62,6 +73,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RegistrationsController.prototype, "checkStatus", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN', 'STAFF'),
     (0, common_1.Get)('registrations/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -69,36 +82,42 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RegistrationsController.prototype, "getRegistration", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN', 'STAFF'),
     (0, common_1.Get)('admin/registrations'),
-    __param(0, (0, common_1.Query)('status')),
-    __param(1, (0, common_1.Query)('search')),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [find_all_query_dto_1.FindAllQueryDto]),
     __metadata("design:returntype", void 0)
 ], RegistrationsController.prototype, "getRegistrations", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN', 'STAFF'),
     (0, common_1.Post)('admin/action'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [admin_action_dto_1.AdminActionDto, Object]),
     __metadata("design:returntype", void 0)
 ], RegistrationsController.prototype, "approveOrReject", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN', 'STAFF'),
     (0, common_1.Post)('admin/note'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [admin_action_dto_1.AdminNoteDto, Object]),
     __metadata("design:returntype", void 0)
 ], RegistrationsController.prototype, "saveAdminNote", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.Get)('admin/export'),
     __param(0, (0, common_1.Res)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], RegistrationsController.prototype, "exportCsv", null);
 exports.RegistrationsController = RegistrationsController = __decorate([

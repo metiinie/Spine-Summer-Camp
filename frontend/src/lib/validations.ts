@@ -3,19 +3,15 @@ import { z } from "zod";
 export const camperSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  age: z.coerce.number({ invalid_type_error: "Age must be a number" }).min(4, "Age must be at least 4").max(16, "Age must be at most 16"),
-  dateOfBirth: z.string().min(1, "Date of birth is required").refine((val) => {
-    const dob = new Date(val);
-    if (isNaN(dob.getTime())) return false;
-    const ageDifMs = Date.now() - dob.getTime();
-    const ageDate = new Date(ageDifMs);
-    const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-    return age >= 4 && age <= 16;
-  }, { message: "Age must be between 4 and 16 years old" }),
+  dobMonth: z.string().min(1, "Month is required"),
+  dobDay: z.string().min(1, "Day is required"),
+  dobYear: z.string().min(4, "Year is required"),
   gender: z.enum(["MALE", "FEMALE"], { message: "Gender is required" }),
   gradeLevel: z.string().min(1, "Grade level is required"),
   schoolName: z.string().min(2, "School name is required"),
   tShirtSize: z.enum(["YOUTH_S", "YOUTH_M", "YOUTH_L"], { message: "T-shirt size is required" }),
+  height: z.string().min(1, "Height is required"),
+  weight: z.string().min(1, "Weight is required"),
 });
 
 export const parentSchema = z.object({
@@ -57,6 +53,9 @@ export const registrationSchema = z.object({
 });
 
 export type CamperFormData = z.infer<typeof camperSchema>;
+export type CamperFormInput = CamperFormData;
+// Extended type stored after submit — includes derived fields
+export type StoredCamperData = CamperFormData & { dateOfBirth: string; age: number };
 export type ParentFormData = z.infer<typeof parentSchema>;
 export type SessionFormData = z.infer<typeof sessionSchema>;
 export type MedicalFormData = z.infer<typeof medicalSchema>;

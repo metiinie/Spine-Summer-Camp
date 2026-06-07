@@ -1,51 +1,73 @@
-import { Controller, Post, Get, Body, Query, UseGuards, Res, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, UseGuards, Param, Res, Req } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
+import { Request, Response } from 'express';
 import { RegistrationsService } from './registrations.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Response } from 'express';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { CreateRegistrationDto } from './dto/create-registration.dto';
+import { FindAllQueryDto } from './dto/find-all-query.dto';
+import { AdminActionDto, AdminNoteDto } from './dto/admin-action.dto';
 
 @Controller()
 export class RegistrationsController {
   constructor(private readonly regService: RegistrationsService) {}
 
-  // Public Routes
+  // Public: submit a new registration — tightly rate-limited
+  @Throttle({ default: { ttl: 60000, limit: 10 } })
   @Post('registrations')
-  createRegistration(@Body() body: any) {
+  createRegistration(@Body() body: CreateRegistrationDto) {
     return this.regService.create(body);
   }
 
+  // Public: status check by reference number or email
+  @Throttle({ default: { ttl: 60000, limit: 20 } })
   @Get('registrations/status')
   checkStatus(@Query('q') query: string) {
     return this.regService.checkStatus(query);
   }
 
+  // Auth required: full registration detail
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF')
   @Get('registrations/:id')
   getRegistration(@Param('id') id: string) {
     return this.regService.findOne(id);
   }
 
-  // Admin Routes
-  @UseGuards(JwtAuthGuard)
+  // Admin: paginated list with optional status/search filters
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF')
   @Get('admin/registrations')
-  getRegistrations(@Query('status') status?: string, @Query('search') search?: string) {
-    return this.regService.findAll(status, search);
+  getRegistrations(@Query() query: FindAllQueryDto) {
+    return this.regService.findAll(query);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // Admin: approve or reject with audit trail
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF')
   @Post('admin/action')
-  approveOrReject(@Body() body: any) {
-    return this.regService.approveOrReject(body.registrationId, body.action, body.rejectionReason);
+  approveOrReject(@Body() body: AdminActionDto, @Req() req: Request) {
+    const user = req.user as { userId: string };
+    return this.regService.approveOrReject(body, user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // Admin: save internal note with audit trail
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF')
   @Post('admin/note')
-  saveAdminNote(@Body() body: any) {
-    return this.regService.saveNote(body.registrationId, body.adminNote);
+  saveAdminNote(@Body() body: AdminNoteDto, @Req() req: Request) {
+    const user = req.user as { userId: string };
+    return this.regService.saveNote(body, user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // Admin only: CSV export with audit trail
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Get('admin/export')
-  async exportCsv(@Res() res: any) {
-    const csv = await this.regService.generateCsv();
+  async exportCsv(@Res() res: Response, @Req() req: Request) {
+    const user = req.user as { userId: string };
+    const csv = await this.regService.generateCsvData(user.userId);
     res.header('Content-Type', 'text/csv');
     res.header('Content-Disposition', `attachment; filename="registrations-${Date.now()}.csv"`);
     res.send(csv);

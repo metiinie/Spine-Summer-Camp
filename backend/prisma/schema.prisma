@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String     @id @default(cuid())
+  email        String     @unique
   passwordHash String
-  role         String   @default("STAFF") // ADMIN, STAFF
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  role         String     @default("STAFF") // ADMIN, STAFF
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
 }
 
 model Registration {
@@ -32,6 +33,7 @@ model Registration {
   parent      Parent?
   medicalInfo MedicalInfo?
   waiver      Waiver?
+  auditLogs   AuditLog[]
 }
 
 model Camper {
@@ -46,6 +48,8 @@ model Camper {
   gradeLevel     String
   schoolName     String
   tShirtSize     String // YOUTH_S, YOUTH_M, YOUTH_L
+  height         Int?         // cm
+  weight         Int?         // kg
 }
 
 model Parent {
@@ -74,11 +78,23 @@ model MedicalInfo {
 }
 
 model Waiver {
-  id                    String       @id @default(cuid())
-  registrationId        String       @unique
-  registration          Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
-  liabilityRelease      Boolean
-  mediaRelease          Boolean
-  parentSignature       String
-  dateSigned            DateTime     @default(now())
+  id               String       @id @default(cuid())
+  registrationId   String       @unique
+  registration     Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  liabilityRelease Boolean
+  mediaRelease     Boolean
+  parentSignature  String
+  dateSigned       DateTime     @default(now())
+}
+
+model AuditLog {
+  id             String        @id @default(cuid())
+  action         String
+  performedBy    String
+  registrationId String?
+  details        String?
+  createdAt      DateTime      @default(now())
+
+  user           User          @relation(fields: [performedBy], references: [id])
+  registration   Registration? @relation(fields: [registrationId], references: [id])
 }
