@@ -119,6 +119,11 @@
           "title": "Bike",
           "description": "Cycling sessions to improve coordination, balance, and physical health.",
           "image": "/activities/cycling.jpg"
+        },
+        {
+          "title": "Arts & Crafts",
+          "description": "Hands-on paper crafts, origami, and creative projects that inspire imagination and fine motor skills.",
+          "image": "/activities/arts-crafts2.jpg"
         }
       ]
     },

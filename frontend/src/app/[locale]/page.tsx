@@ -11,7 +11,10 @@ import {
   CheckCircle2,
   Sparkles,
   Phone,
-  Gift
+  Gift,
+  MapPin,
+  Calendar,
+  Tag,
 } from "lucide-react";
 import { FirstVisitRedirect } from "@/components/FirstVisitRedirect";
 
@@ -50,28 +53,46 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
             </span>
           </h1>
 
-          <p className="text-xl text-slate-600 dark:text-slate-400 dark:text-slate-500 max-w-2xl mx-auto mb-4 leading-relaxed">
+          <p className="text-xl text-slate-600 dark:text-slate-400 dark:text-slate-500 max-w-2xl mx-auto mb-8 leading-relaxed">
             {t("subtitle")}
           </p>
 
-          <div className="flex items-center justify-center gap-2 text-emerald-600 font-semibold text-lg mb-10">
-            <Sun className="w-5 h-5" />
-            {t("dates")}
+          {/* Partner logos with names */}
+          <div className="flex flex-wrap justify-center items-center gap-6 mb-10">
+            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-5 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+              <div className="relative w-16 h-16 flex-shrink-0">
+                <Image src="/logo-1.png" alt="Spine Consultancy" fill className="object-contain" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-slate-400 dark:text-slate-500 leading-none mb-0.5">Organized by</p>
+                <p className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Spine Consultancy</p>
+              </div>
+            </div>
+            <div className="text-slate-300 dark:text-slate-600 font-light text-xl">×</div>
+            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-5 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+              <div className="relative w-16 h-16 flex-shrink-0">
+                <Image src="/logo-2.png" alt="Ghion Hotel" fill className="object-contain" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-slate-400 dark:text-slate-500 leading-none mb-0.5">Hosted at</p>
+                <p className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Ghion Hotel</p>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href={`/register`}
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white text-lg font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+              className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
             >
               {t("cta")}
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href={`/status`}
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-lg font-semibold border-2 border-slate-200 dark:border-slate-700 hover:border-sky-300 hover:text-sky-600 transition-all duration-200"
+              href={`/activities`}
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm font-semibold border-2 border-slate-200 dark:border-slate-700 hover:border-sky-300 hover:text-sky-600 transition-all duration-200"
             >
-              {t("checkStatus")}
+              {t("aboutUs")}
             </Link>
           </div>
         </div>
@@ -83,80 +104,59 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
       </section>
 
       {/* Stats bar */}
-      <section className="py-8 bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-3 gap-6 text-center">
+      <section className="py-5 bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-3 gap-4 text-center">
           {[
             { icon: Users, label: "Ages 4–16", value: "All Welcome" },
             { icon: Clock, label: "6 Weeks", value: "July–August" },
             { icon: Star, label: "Activities", value: "20+ Daily" },
           ].map(({ icon: Icon, label, value }) => (
-            <div key={label} className="flex flex-col items-center gap-1">
-              <div className="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center mb-1">
-                <Icon className="w-5 h-5 text-sky-500" />
+            <div key={label} className="flex flex-col items-center gap-0.5">
+              <div className="w-7 h-7 rounded-full bg-sky-50 flex items-center justify-center mb-0.5">
+                <Icon className="w-3.5 h-3.5 text-sky-500" />
               </div>
-              <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{value}</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">{label}</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{value}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Organizers & Partners */}
-      <section className="py-12 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-8">
-            Brought to you by
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-16">
-            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-all hover:-translate-y-1">
-              <div className="relative w-32 h-20 sm:w-48 sm:h-24">
-                <Image src="/logo-1.png" alt="Spine Consultancy" fill className="object-contain" />
-              </div>
-            </div>
-            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-all hover:-translate-y-1">
-              <div className="relative w-32 h-20 sm:w-48 sm:h-24">
-                <Image src="/logo-2.png" alt="Ghion Hotel" fill className="object-contain" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Sessions */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-3">
+      <section className="py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
               {tSessions("title")}
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 text-lg">{tSessions("subtitle")}</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{tSessions("subtitle")}</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6">
             {/* Half Day */}
-            <div className="group relative bg-white dark:bg-slate-900 rounded-3xl p-8 border-2 border-transparent hover:border-sky-300 shadow-md hover:shadow-xl transition-all duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="group relative bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-transparent hover:border-sky-300 shadow-md hover:shadow-xl transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300 text-sm font-semibold mb-4">
-                  <Sun className="w-3.5 h-3.5" />
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300 text-xs font-semibold mb-3">
+                  <Sun className="w-3 h-3" />
                   {tSessions("halfDay.session")}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">{tSessions("halfDay.title")}</h3>
-                <p className="text-sky-600 font-semibold mb-1">{tSessions("halfDay.hours")}</p>
-                <p className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-6">
-                  {tSessions("halfDay.price")} <span className="text-lg font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500">ETB</span>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-0.5">{tSessions("halfDay.title")}</h3>
+                <p className="text-sky-600 text-sm font-semibold mb-0.5">{tSessions("halfDay.hours")}</p>
+                <p className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mb-4">
+                  {tSessions("halfDay.price")} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">ETB</span>
                 </p>
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-2 mb-6">
                   {halfDayFeatures.map((f: string) => (
-                    <li key={f} className="flex items-center gap-3 text-slate-600 dark:text-slate-400 dark:text-slate-500">
-                      <CheckCircle2 className="w-5 h-5 text-sky-500 flex-shrink-0" />
+                    <li key={f} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                      <CheckCircle2 className="w-4 h-4 text-sky-500 flex-shrink-0" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href={`/register`}
-                  className="block w-full text-center py-3 rounded-xl bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors"
+                  className="block w-full text-center py-2.5 rounded-lg bg-sky-500 text-white text-sm font-semibold hover:bg-sky-600 transition-colors"
                 >
                   {tSessions("title")}
                 </Link>
@@ -164,30 +164,30 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
             </div>
 
             {/* Full Day */}
-            <div className="group relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 border-2 border-emerald-400/30 hover:border-emerald-400 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-emerald-400 text-slate-900 dark:text-slate-100 text-xs font-bold">
+            <div className="group relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 border-2 border-emerald-400/30 hover:border-emerald-400 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <div className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-emerald-400 text-slate-900 text-xs font-bold">
                 Most Popular
               </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-900/50 text-emerald-400 text-sm font-semibold mb-4">
-                <Star className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-900/50 text-emerald-400 text-xs font-semibold mb-3">
+                <Star className="w-3 h-3" />
                 {tSessions("fullDay.session")}
               </div>
-              <h3 className="text-2xl font-bold text-white mb-1">{tSessions("fullDay.title")}</h3>
-              <p className="text-emerald-400 font-semibold mb-1">{tSessions("fullDay.hours")}</p>
-              <p className="text-3xl font-extrabold text-white mb-6">
-                {tSessions("fullDay.price")} <span className="text-lg font-semibold text-slate-400 dark:text-slate-500">ETB</span>
+              <h3 className="text-lg font-bold text-white mb-0.5">{tSessions("fullDay.title")}</h3>
+              <p className="text-emerald-400 text-sm font-semibold mb-0.5">{tSessions("fullDay.hours")}</p>
+              <p className="text-2xl font-extrabold text-white mb-4">
+                {tSessions("fullDay.price")} <span className="text-sm font-semibold text-slate-400">ETB</span>
               </p>
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-2 mb-6">
                 {fullDayFeatures.map((f: string) => (
-                  <li key={f} className="flex items-center gap-3 text-slate-300">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
               <Link
                 href={`/register`}
-                className="block w-full text-center py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold hover:opacity-90 transition-opacity"
+                className="block w-full text-center py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-sky-500 text-white text-sm font-semibold hover:opacity-90 transition-opacity"
               >
                 {tSessions("title")}
               </Link>
@@ -195,35 +195,35 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
           </div>
 
           {/* Discounts & QR Code */}
-          <div className="mt-12 bg-white dark:bg-slate-900 rounded-3xl p-8 border-2 border-slate-100 dark:border-slate-800 shadow-lg">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="mt-8 bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-slate-100 dark:border-slate-800 shadow-md">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex-1">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 text-sm font-semibold mb-4">
-                  <Gift className="w-4 h-4" />
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 text-xs font-semibold mb-3">
+                  <Gift className="w-3.5 h-3.5" />
                   {tSessions("discounts.title")}
                 </div>
-                <ul className="space-y-4">
-                  <li className="flex items-center gap-3 text-lg font-semibold text-slate-800 dark:text-slate-200">
-                    <span className="w-2 h-2 rounded-full bg-rose-500" />
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                     {tSessions("discounts.twoKids")}
                   </li>
-                  <li className="flex items-center gap-3 text-lg font-semibold text-slate-800 dark:text-slate-200">
-                    <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  <li className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                     {tSessions("discounts.threeKids")}
                   </li>
-                  <li className="flex items-center gap-3 text-lg font-semibold text-slate-800 dark:text-slate-200">
-                    <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  <li className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                     {tSessions("discounts.fiveKids")}
                   </li>
                 </ul>
               </div>
               
-              <div className="flex flex-col items-center p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
-                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-4">
+              <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-3">
                   Scan to watch video
                 </p>
-                <div className="bg-white p-2 rounded-xl shadow-sm mb-2">
-                  <Image src="/qrcode.png" alt="Scan to watch video" width={120} height={120} className="object-contain" />
+                <div className="bg-white p-1.5 rounded-lg shadow-sm mb-1.5">
+                  <Image src="/qrcode.png" alt="Scan to watch video" width={90} height={90} className="object-contain" />
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   Spine Summer Camp
@@ -282,19 +282,85 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 dark:text-slate-500 py-10 text-center text-sm">
-        <div className="flex justify-center items-center gap-6 mb-4">
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            <span>0995173291</span>
+      <footer className="bg-slate-900 text-slate-400 py-14 text-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+            {/* Location & Dates */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-800 rounded-lg text-sky-400 mt-0.5">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-slate-200 font-semibold text-xs uppercase tracking-wider mb-1">Location</p>
+                  <p>Ghion Hotel</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-800 rounded-lg text-sky-400 mt-0.5">
+                  <Calendar className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-slate-200 font-semibold text-xs uppercase tracking-wider mb-1">Dates</p>
+                  <p>July 1 – August 15</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-800 rounded-lg text-sky-400 mt-0.5">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-slate-200 font-semibold text-xs uppercase tracking-wider mb-1">Ages</p>
+                  <p>4 to 16 years old</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Packages */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-800 rounded-lg text-emerald-400 mt-0.5">
+                  <Tag className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-slate-200 font-semibold text-xs uppercase tracking-wider mb-1">Packages</p>
+                  <p>Half Day — 26,000 BIRR</p>
+                  <p>Full Day — 40,000 BIRR</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-800 rounded-lg text-emerald-400 mt-0.5">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-slate-200 font-semibold text-xs uppercase tracking-wider mb-1">Discounts</p>
+                  <p>2 Kids — 20% off</p>
+                  <p>3 Kids — 40% off</p>
+                  <p>5 Kids — 1 Free</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-slate-800 rounded-lg text-sky-400 mt-0.5">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-slate-200 font-semibold text-xs uppercase tracking-wider mb-1">Contact</p>
+                  <p>0995173291</p>
+                  <p>0995172939</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            <span>0995172939</span>
+
+          <div className="border-t border-slate-800 pt-6 text-center">
+            <p className="text-slate-500">© 2026 Spine Summer Camp. All rights reserved.</p>
+            <p className="text-slate-600 mt-1">Addis Ababa, Ethiopia</p>
           </div>
         </div>
-        <p>© 2026 Spine Summer Camp. All rights reserved.</p>
-        <p className="mt-1">Addis Ababa, Ethiopia</p>
       </footer>
     </main>
   );

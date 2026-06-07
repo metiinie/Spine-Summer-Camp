@@ -15,16 +15,12 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
             <Sparkles className="w-4 h-4" />
             {t("title")}
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-slate-100 mb-6">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-slate-100 mb-4">
             {t("title")}
           </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-6">
             {t("subtitle")}
           </p>
-        </div>
-
-        {/* About Text Section */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 mb-12 shadow-sm border border-slate-200 dark:border-slate-800 text-center">
           <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed max-w-4xl mx-auto">
             {t.rich('aboutText', {
               spine: (chunks) => <span className="text-sky-600 dark:text-sky-400 font-extrabold">{chunks}</span>,
@@ -33,8 +29,39 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
           </p>
         </div>
 
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+            {t("programsTitle")}
+          </h2>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          {activities.map((activity, idx) => (
+            <div key={idx} className="group bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-300 transform hover:-translate-y-1">
+              <div className="relative h-60 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                <Image
+                  src={activity.image}
+                  alt={activity.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+              <div className="p-6 relative">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+                  {activity.title}
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                  {activity.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Camp Info Section */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 mb-16 shadow-sm border border-slate-200 dark:border-slate-800">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-200 dark:border-slate-800">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-sky-100 dark:bg-sky-900/50 rounded-xl text-sky-600 dark:text-sky-400">
@@ -96,37 +123,6 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-            {t("programsTitle")}
-          </h2>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {activities.map((activity, idx) => (
-            <div key={idx} className="group bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-300 transform hover:-translate-y-1">
-              <div className="relative h-60 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-                <Image
-                  src={activity.image}
-                  alt={activity.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-              <div className="p-6 relative">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
-                  {activity.title}
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                  {activity.description}
-                </p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </main>

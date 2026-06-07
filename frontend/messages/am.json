@@ -119,6 +119,11 @@
           "title": "ብስክሌት (Bike)",
           "description": "ቅንጅትን፣ ሚዛንን እና አካላዊ ጤንነትን ለማሻሻል የብስክሌት መንዳት።",
           "image": "/activities/cycling.jpg"
+        },
+        {
+          "title": "ጥበብ እና ዕደ-ጥበብ (Arts & Crafts)",
+          "description": "ምናብን እና ጥቃቅን እንቅስቃሴ ክህሎቶችን የሚያነቃቁ የእጅ ሥራ፣ ኦሪጋሚ እና የፈጠራ ፕሮጀክቶች።",
+          "image": "/activities/arts-crafts2.jpg"
         }
       ]
     },
