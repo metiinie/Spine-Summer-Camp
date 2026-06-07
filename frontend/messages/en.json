@@ -11,9 +11,10 @@
       "badge": "Summer 2026",
       "title": "Spine Summer Camp",
       "subtitle": "An unforgettable summer of learning, creativity, and fun for children ages 4–16.",
-      "dates": "July 8 – August 22, 2026",
+      "partnerText1": "Brought to you by the expert educational minds at <spine>Spine Consultancy</spine> and hosted at the prestigious <ghion>Ghion Hotel</ghion>.",
+      "partnerText2": "We have carefully crafted a unique environment where your child can thrive, develop new skills, and create lifelong memories.",
       "cta": "Register Now",
-      "checkStatus": "Check Registration Status"
+      "aboutUs": "Learn More About Us"
     },
     "sessions": {
       "title": "Choose Your Session",
@@ -68,6 +69,7 @@
     "activitiesPage": {
       "title": "About Us",
       "subtitle": "Discover everything you need to know about Spine Summer Camp.",
+      "aboutText": "Welcome to the ultimate summer experience! <spine>Spine Consultancy</spine> and <ghion>Ghion Hotel</ghion> have proudly partnered to bring you an unforgettable Summer Camp for your children. We believe in nurturing young minds through a perfect blend of learning, creativity, and fun. Our carefully designed programs offer a safe and engaging environment where children can build confidence, make new friends, and discover their hidden talents. Join us for a summer filled with joy and growth!",
       "info": {
         "location": "Ghion Hotel",
         "dates": "July 1 - August 15",
@@ -81,42 +83,42 @@
         {
           "title": "Swimming",
           "description": "Fun and safe swimming sessions to cool off and build confidence in the water.",
-          "image": "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?w=800&q=80"
+          "image": "/activities/swimming.jpg"
         },
         {
           "title": "Cultural Dance",
           "description": "Learn traditional dances and embrace our rich cultural heritage.",
-          "image": "https://images.unsplash.com/photo-1542844843-34e857dddb3f?w=800&q=80"
+          "image": "/activities/cultural-dance.jpg"
         },
         {
           "title": "Empathy and Self Awareness",
           "description": "Sessions designed to build emotional intelligence and self-confidence.",
-          "image": "https://images.unsplash.com/photo-1529156069898-49953eb1b5ce?w=800&q=80"
+          "image": "/activities/empathy.jpg"
         },
         {
           "title": "Football",
           "description": "Team building and physical fitness through our popular football games.",
-          "image": "https://images.unsplash.com/photo-1518605368461-1ee11acdd171?w=800&q=80"
+          "image": "/activities/football.jpg"
         },
         {
           "title": "Creative Fun Activities",
           "description": "Arts, crafts, and imaginative play to spark creativity.",
-          "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=80"
+          "image": "/activities/arts-crafts.jpg"
         },
         {
           "title": "Karate & Self-Defense",
           "description": "Learn basic self-defense skills while improving discipline and focus.",
-          "image": "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&q=80"
+          "image": "/activities/karate.jpg"
         },
         {
           "title": "Smart Thinking Games",
           "description": "Chess and other puzzles that challenge the mind and develop strategic thinking.",
-          "image": "https://images.unsplash.com/photo-1528819622765-d6bcf132f793?w=800&q=80"
+          "image": "/activities/chess.jpg"
         },
         {
           "title": "Bike",
           "description": "Cycling sessions to improve coordination, balance, and physical health.",
-          "image": "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?w=800&q=80"
+          "image": "/activities/cycling.jpg"
         }
       ]
     },

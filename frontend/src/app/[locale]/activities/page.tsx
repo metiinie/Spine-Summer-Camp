@@ -23,6 +23,16 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
           </p>
         </div>
 
+        {/* About Text Section */}
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 mb-12 shadow-sm border border-slate-200 dark:border-slate-800 text-center">
+          <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed max-w-4xl mx-auto">
+            {t.rich('aboutText', {
+              spine: (chunks) => <span className="text-sky-600 dark:text-sky-400 font-extrabold">{chunks}</span>,
+              ghion: (chunks) => <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">{chunks}</span>
+            })}
+          </p>
+        </div>
+
         {/* Camp Info Section */}
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 mb-16 shadow-sm border border-slate-200 dark:border-slate-800">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

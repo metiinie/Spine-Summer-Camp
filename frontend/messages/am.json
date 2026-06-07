@@ -11,9 +11,10 @@
       "badge": "ክረምት 2026",
       "title": "ቀለም የክረምት ካምፕ",
       "subtitle": "ከ4-16 ዓመት ለሚደርሱ ልጆች የማይረሳ የክረምት ጊዜ - ትምህርት፣ ፈጠራ እና ተዝናኖት።",
-      "dates": "ሐምሌ 1 – ነሐሴ 16, 2026",
+      "partnerText1": "ይህ ፕሮግራም በትምህርት ባለሙያው <spine>ስፓይን አማካሪ (Spine Consultancy)</spine> የተዘጋጀ ሲሆን፣ ታዋቂው <ghion>ጊዮን ሆቴል (Ghion Hotel)</ghion> በሚገኝበት ውብ ስፍራ ይካሄዳል።",
+      "partnerText2": "ልጅዎ አዳዲስ ክህሎቶችን እንዲያዳብር፣ በራስ መተማመኑ እንዲጨምር እና የዕድሜ ልክ ትዝታዎችን እንዲፈጥር ልዩ አካባቢን አዘጋጅተናል።",
       "cta": "አሁን ይመዝገቡ",
-      "checkStatus": "የምዝገባ ሁኔታ ያረጋግጡ"
+      "aboutUs": "ስለ እኛ የበለጠ ይወቁ"
     },
     "sessions": {
       "title": "ክፍለ ጊዜዎ ይምረጡ",
@@ -68,6 +69,7 @@
     "activitiesPage": {
       "title": "ስለ እኛ",
       "subtitle": "ስለ ቀለም የክረምት ካምፕ ማወቅ ያለቦትን ሁሉ ያግኙ።",
+      "aboutText": "እንኳን ወደር የሌለው የክረምት ተሞክሮ በደህና መጡ! <spine>ስፓይን አማካሪ (Spine Consultancy)</spine> እና <ghion>ጊዮን ሆቴል (Ghion Hotel)</ghion> ለልጆችዎ የማይረሳ የክረምት ካምፕን ለማቅረብ በኩራት ተባብረዋል። ወጣት አእምሮዎችን በትምህርት፣ በፈጠራ እና በመዝናኛ ማሳደግ እንዳለብን እናምናለን። በጥንቃቄ የተነደፉት ፕሮግራሞቻችን ልጆች በራስ መተማመንን የሚገነቡበት፣ አዳዲስ ጓደኞችን የሚያፈሩበት እና የተደበቀ ተሰጥኦቸውን የሚያገኙበት ደህንነቱ የተጠበቀ እና አሳታፊ አካባቢን ይሰጣሉ። በደስታ እና በእድገት የተሞላ ክረምት ለማሳለፍ ከእኛ ጋር ይቀላቀሉ!",
       "info": {
         "location": "ጊዮን ሆቴል (Ghion Hotel)",
         "dates": "ሐምሌ 1 – ነሐሴ 15",
@@ -81,42 +83,42 @@
         {
           "title": "ዋና (Swimming)",
           "description": "አስደሳች እና ደህንነቱ የተጠበቀ የዋና ክፍለ ጊዜዎች ልጆች በውሃ ላይ ያላቸውን በራስ መተማመን እንዲገነቡ።",
-          "image": "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?w=800&q=80"
+          "image": "/activities/swimming.jpg"
         },
         {
           "title": "ባህላዊ ውዝዋዜ (Cultural Dance)",
           "description": "ባህላዊ ውዝዋዜዎችን ይማሩ እና የበለጸገውን ባህላዊ ቅርሳችንን ይቀበሉ።",
-          "image": "https://images.unsplash.com/photo-1542844843-34e857dddb3f?w=800&q=80"
+          "image": "/activities/cultural-dance.jpg"
         },
         {
           "title": "ስሜትን መረዳት እና ራስን ማወቅ (Empathy and Self Awareness)",
           "description": "የልጆችን ስሜታዊ እውቀት እና በራስ መተማመንን ለመገንባት የተነደፉ ክፍለ ጊዜዎች።",
-          "image": "https://images.unsplash.com/photo-1529156069898-49953eb1b5ce?w=800&q=80"
+          "image": "/activities/empathy.jpg"
         },
         {
           "title": "እግር ኳስ (Football)",
           "description": "በታዋቂ የእግር ኳስ ጨዋታዎቻችን አማካኝነት የቡድን ስራን እና አካላዊ ብቃትን ማሳደግ።",
-          "image": "https://images.unsplash.com/photo-1518605368461-1ee11acdd171?w=800&q=80"
+          "image": "/activities/football.jpg"
         },
         {
           "title": "የፈጠራ እንቅስቃሴዎች (Creative Fun Activities)",
           "description": "የፈጠራ ክህሎትን ለማነቃቃት ስዕል፣ ጥበብ እና ምናባዊ ጨዋታዎች።",
-          "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=80"
+          "image": "/activities/arts-crafts.jpg"
         },
         {
           "title": "ካራቴ እና ራስን መከላከል (Karate & Self-Defense)",
           "description": "ስነ-ስርዓት እና ትኩረትን በማሻሻል መሰረታዊ ራስን የመከላከል ክህሎቶችን ይማሩ።",
-          "image": "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&q=80"
+          "image": "/activities/karate.jpg"
         },
         {
           "title": "የአዕምሮ ማጎልመሻ ጨዋታዎች (Smart Thinking Games)",
           "description": "አዕምሮን የሚፈትኑ እና ስልታዊ አስተሳሰብን የሚያዳብሩ ቼስ እና ሌሎች ጨዋታዎች።",
-          "image": "https://images.unsplash.com/photo-1528819622765-d6bcf132f793?w=800&q=80"
+          "image": "/activities/chess.jpg"
         },
         {
           "title": "ብስክሌት (Bike)",
           "description": "ቅንጅትን፣ ሚዛንን እና አካላዊ ጤንነትን ለማሻሻል የብስክሌት መንዳት።",
-          "image": "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?w=800&q=80"
+          "image": "/activities/cycling.jpg"
         }
       ]
     },
