@@ -8,8 +8,12 @@ const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
 const http_exception_filter_1 = require("./common/filters/http-exception.filter");
+const path_1 = require("path");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public', 'uploads'), {
+        prefix: '/uploads',
+    });
     app.use((0, helmet_1.default)());
     app.enableCors({
         origin: [

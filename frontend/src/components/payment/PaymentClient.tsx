@@ -67,7 +67,7 @@ export function PaymentClient({ registration }: PaymentClientProps) {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 mb-4">
             <CheckCircle2 className="w-8 h-8 text-emerald-500" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Registration Submitted!</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Registration Submitted!</h1>
           <p className="text-slate-500">
             {registration.camper?.firstName}, your registration has been received. Complete your payment below to secure your spot.
           </p>
@@ -78,7 +78,7 @@ export function PaymentClient({ registration }: PaymentClientProps) {
           <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">Your Reference Number</p>
           <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3 border border-slate-200">
             <span className="font-mono text-xl font-bold text-slate-900">{registration.referenceNumber}</span>
-            <button onClick={copyRef} className="text-slate-400 hover:text-sky-500 transition ml-2">
+            <button onClick={copyRef} className="p-2 text-slate-400 hover:text-sky-500 transition ml-2">
               {copied ? <Check className="w-5 h-5 text-emerald-500" /> : <Copy className="w-5 h-5" />}
             </button>
           </div>

@@ -35,7 +35,7 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
     <main className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
       <FirstVisitRedirect />
       {/* Hero */}
-      <section className="relative pt-28 pb-24 overflow-hidden">
+      <section className="relative pt-20 md:pt-28 pb-24 overflow-hidden">
         {/* Background blobs */}
         <div className="absolute top-10 -left-20 w-96 h-96 bg-sky-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" />
         <div className="absolute top-20 -right-20 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: "1s" }} />
@@ -46,32 +46,32 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
             {t("badge")}
           </div>
 
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-slate-100 mb-6 leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-slate-100 mb-4 md:mb-6 leading-tight tracking-tight">
             {t("title").split(" ").slice(0, -1).join(" ")}{" "}
             <span className="bg-gradient-to-r from-sky-500 to-emerald-500 bg-clip-text text-transparent">
               {t("title").split(" ").slice(-1)[0]}
             </span>
           </h1>
 
-          <p className="text-xl text-slate-600 dark:text-slate-400 dark:text-slate-500 max-w-2xl mx-auto mb-8 leading-relaxed">
+          <p className="text-base md:text-xl text-slate-600 dark:text-slate-400 dark:text-slate-500 max-w-2xl mx-auto mb-6 md:mb-8 leading-relaxed">
             {t("subtitle")}
           </p>
 
           {/* Partner logos with names */}
-          <div className="flex flex-wrap justify-center items-center gap-6 mb-10">
-            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-5 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-              <div className="relative w-16 h-16 flex-shrink-0">
-                <Image src="/logo-1.png" alt="Spine Consultancy" fill className="object-contain" />
+          <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-4 md:gap-6 mb-10">
+            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 md:px-5 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 w-full max-w-xs md:w-auto">
+              <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
+                <Image src="/logo-1.png" alt="Spine Consultancy" fill className="object-contain" sizes="(max-width: 768px) 48px, 64px" />
               </div>
               <div className="text-left">
                 <p className="text-xs text-slate-400 dark:text-slate-500 leading-none mb-0.5">Organized by</p>
                 <p className="font-bold text-slate-800 dark:text-slate-100 text-sm leading-tight">Spine Consultancy</p>
               </div>
             </div>
-            <div className="text-slate-300 dark:text-slate-600 font-light text-xl">×</div>
-            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-5 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-              <div className="relative w-16 h-16 flex-shrink-0">
-                <Image src="/logo-2.png" alt="Ghion Hotel" fill className="object-contain" />
+            <div className="text-slate-300 dark:text-slate-600 font-light text-xl hidden md:block">×</div>
+            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 md:px-5 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 w-full max-w-xs md:w-auto">
+              <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
+                <Image src="/logo-2.png" alt="Ghion Hotel" fill className="object-contain" sizes="(max-width: 768px) 48px, 64px" />
               </div>
               <div className="text-left">
                 <p className="text-xs text-slate-400 dark:text-slate-500 leading-none mb-0.5">Hosted at</p>
@@ -132,7 +132,7 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
             <p className="text-slate-500 dark:text-slate-400 text-sm">{tSessions("subtitle")}</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Half Day */}
             <div className="group relative bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-transparent hover:border-sky-300 shadow-md hover:shadow-xl transition-all duration-300">
               <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -223,7 +223,7 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
                   Scan to watch video
                 </p>
                 <div className="bg-white p-1.5 rounded-lg shadow-sm mb-1.5">
-                  <Image src="/qrcode.png" alt="Scan to watch video" width={90} height={90} className="object-contain" />
+                  <Image src="/qrcode.png" alt="Scan to watch video" width={90} height={90} className="object-contain" sizes="90px" />
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   Spine Summer Camp
@@ -282,9 +282,9 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-14 text-sm">
+      <footer className="bg-slate-900 text-slate-400 py-10 md:py-14 text-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-10">
             {/* Location & Dates */}
             <div className="space-y-4">
               <div className="flex items-start gap-3">

@@ -71,12 +71,12 @@ export declare class RegistrationsController {
         createdAt: Date;
         updatedAt: Date;
         session: string;
-        referenceNumber: string;
         status: string;
+        rejectionReason: string | null;
+        adminNote: string | null;
+        referenceNumber: string;
         amount: import("@prisma/client/runtime/library").Decimal;
         receiptUrl: string | null;
-        adminNote: string | null;
-        rejectionReason: string | null;
     }>;
     getRegistrations(query: FindAllQueryDto): Promise<{
         data: ({
@@ -128,12 +128,12 @@ export declare class RegistrationsController {
             createdAt: Date;
             updatedAt: Date;
             session: string;
-            referenceNumber: string;
             status: string;
+            rejectionReason: string | null;
+            adminNote: string | null;
+            referenceNumber: string;
             amount: import("@prisma/client/runtime/library").Decimal;
             receiptUrl: string | null;
-            adminNote: string | null;
-            rejectionReason: string | null;
         })[];
         meta: {
             total: number;

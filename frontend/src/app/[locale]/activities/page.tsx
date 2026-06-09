@@ -8,7 +8,7 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
   const activities = t.raw("items") as { title: string; description: string; image: string }[];
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-28 pb-20">
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-28 pb-16 md:pb-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300 text-sm font-semibold mb-6 border border-sky-200 dark:border-sky-800">
@@ -30,12 +30,12 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
         </div>
 
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100">
             {t("programsTitle")}
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16">
           {activities.map((activity, idx) => (
             <div key={idx} className="group bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-300 transform hover:-translate-y-1">
               <div className="relative h-60 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -61,8 +61,8 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
         </div>
 
         {/* Camp Info Section */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-200 dark:border-slate-800">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-sky-100 dark:bg-sky-900/50 rounded-xl text-sky-600 dark:text-sky-400">
                 <MapPin className="w-6 h-6" />
@@ -109,7 +109,7 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Packages</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-xs whitespace-pre-line">{t("info.packages")}</p>
+                <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm whitespace-pre-line">{t("info.packages")}</p>
               </div>
             </div>
 
@@ -119,7 +119,7 @@ export default async function ActivitiesPage({ params: { locale } }: { params: {
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Discounts</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-xs whitespace-pre-line">{t("info.discounts")}</p>
+                <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm whitespace-pre-line">{t("info.discounts")}</p>
               </div>
             </div>
           </div>

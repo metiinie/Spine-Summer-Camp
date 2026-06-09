@@ -5,17 +5,19 @@ const prisma = new PrismaClient();
 
 async function main() {
   const users = [
-    { email: "admin@spinecamp.com", password: "Admin@2026", role: "ADMIN" },
-    { email: "awol@gmail.com", password: "12345678", role: "ADMIN" }
+    { email: "awol@gmail.com", password: "12345678", role: "ADMIN" },
+    { email: "awole@gmail.com", password: "12345678", role: "ADMIN" }
   ];
 
   for (const u of users) {
+    // Delete existing user if it exists
     const existing = await prisma.user.findUnique({ where: { email: u.email } });
     if (existing) {
-      console.log(`✅ User already exists: ${existing.email}`);
-      continue;
+      await prisma.user.delete({ where: { email: u.email } });
+      console.log(`🗑️  Deleted existing user: ${existing.email}`);
     }
 
+    // Create new user with hashed password
     const passwordHash = await bcrypt.hash(u.password, 12);
     await prisma.user.create({
       data: {

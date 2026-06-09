@@ -15,7 +15,7 @@ import {
   Eye,
   X,
 } from "lucide-react";
-import Image from "next/image";
+import { RegistrationCard } from "./RegistrationCard";
 
 type Status = "PENDING_PAYMENT" | "RECEIPT_UPLOADED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
 
@@ -70,9 +70,30 @@ export function AdminDashboardClient() {
       if (statusFilter !== "all") params.set("status", statusFilter);
       if (search) params.set("search", search);
       const res = await fetch(`/api/admin/registrations?${params}`);
-      const data = await res.json();
-      setRegistrations(data);
-    } catch {}
+      
+      if (!res.ok) {
+        console.error('Failed to fetch registrations:', res.status);
+        setRegistrations([]);
+        setLoading(false);
+        return;
+      }
+      
+      const response = await res.json();
+      
+      // Backend returns { data: [], meta: {} } structure
+      if (response.data && Array.isArray(response.data)) {
+        setRegistrations(response.data);
+      } else if (Array.isArray(response)) {
+        // Fallback if backend returns array directly
+        setRegistrations(response);
+      } else {
+        console.error('Invalid data format received:', response);
+        setRegistrations([]);
+      }
+    } catch (error) {
+      console.error('Error fetching registrations:', error);
+      setRegistrations([]);
+    }
     setLoading(false);
   }, [statusFilter, search]);
 
@@ -157,14 +178,14 @@ export function AdminDashboardClient() {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900 transition"
             >
               <Download className="w-4 h-4" />
-              Export CSV
+              <span className="hidden sm:inline">Export CSV</span>
             </a>
             <button
               onClick={() => signOut({ callbackUrl: "/admin/login" })}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900 transition"
             >
               <LogOut className="w-4 h-4" />
-              Sign Out
+              <span className="hidden sm:inline">Sign Out</span>
             </button>
           </div>
         </div>
@@ -221,8 +242,8 @@ export function AdminDashboardClient() {
             </div>
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
+          {/* Table View - Desktop */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-slate-50 dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
                 <tr>
@@ -256,8 +277,8 @@ export function AdminDashboardClient() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <button className="p-1 text-slate-400 dark:text-slate-500 hover:text-sky-500 transition" onClick={(e) => { e.stopPropagation(); setSelected(reg); }}>
-                          <Eye className="w-4 h-4" />
+                        <button className="p-2 text-slate-400 dark:text-slate-500 hover:text-sky-500 transition" onClick={(e) => { e.stopPropagation(); setSelected(reg); }}>
+                          <Eye className="w-5 h-5" />
                         </button>
                       </td>
                     </tr>
@@ -266,6 +287,25 @@ export function AdminDashboardClient() {
               </tbody>
             </table>
           </div>
+
+          {/* Card View - Mobile */}
+          <div className="block md:hidden p-4">
+            {loading ? (
+              <div className="py-12 text-center text-slate-400 dark:text-slate-500">Loading...</div>
+            ) : registrations.length === 0 ? (
+              <div className="py-12 text-center text-slate-400 dark:text-slate-500">No registrations found.</div>
+            ) : (
+              <div className="space-y-4">
+                {registrations.map((reg) => (
+                  <RegistrationCard
+                    key={reg.id}
+                    registration={reg}
+                    onView={() => setSelected(reg)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -273,7 +313,7 @@ export function AdminDashboardClient() {
       {selected && (
         <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelected(null)} />
-          <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 h-full overflow-y-auto shadow-2xl">
+          <div className="relative w-full md:max-w-lg bg-white dark:bg-slate-900 h-full overflow-y-auto shadow-2xl">
             <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-6 py-4 flex items-center justify-between z-10">
               <div>
                 <h2 className="font-bold text-slate-900 dark:text-slate-100">{selected.camper?.firstName} {selected.camper?.lastName}</h2>
@@ -332,22 +372,28 @@ export function AdminDashboardClient() {
               {/* Receipt */}
               {selected.receiptUrl && (
                 <Section title="Payment Receipt">
-                  {selected.receiptUrl.toLowerCase().endsWith(".pdf") ? (
-                    <a href={selected.receiptUrl} target="_blank" rel="noopener noreferrer" className="text-sky-500 underline text-sm">View PDF Receipt</a>
-                  ) : (
-                    <>
-                      <div className="mt-2 relative h-64 w-full">
-                        <Image
-                          src={selected.receiptUrl}
-                          alt="Receipt"
-                          fill
-                          className="rounded-xl border border-slate-200 dark:border-slate-700 object-contain cursor-zoom-in"
-                          onClick={() => window.open(selected.receiptUrl!, "_blank")}
+                  {(() => {
+                    // Rewrite backend absolute URL to proxied relative path
+                    const rawUrl = selected.receiptUrl;
+                    const proxyUrl = rawUrl.replace(/^https?:\/\/[^/]+\/uploads\//, "/uploads/");
+                    const isPdf = proxyUrl.toLowerCase().includes(".pdf");
+                    return isPdf ? (
+                      <a href={proxyUrl} target="_blank" rel="noopener noreferrer" className="text-sky-500 underline text-sm">
+                        View PDF Receipt
+                      </a>
+                    ) : (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={proxyUrl}
+                          alt="Payment Receipt"
+                          className="mt-2 w-full max-h-72 rounded-xl border border-slate-200 dark:border-slate-700 object-contain cursor-zoom-in"
+                          onClick={() => window.open(proxyUrl, "_blank")}
                         />
-                      </div>
-                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 text-center">Click to zoom</p>
-                    </>
-                  )}
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 text-center">Click to zoom</p>
+                      </>
+                    );
+                  })()}
                 </Section>
               )}
 

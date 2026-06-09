@@ -208,7 +208,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
         <div className="flex-1 w-full max-w-2xl mx-auto">
           {/* Progress Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">Camp Registration</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">Camp Registration</h1>
           <p className="text-slate-500 dark:text-slate-400 text-center mb-8">Complete all steps to register your child</p>
           <div className="flex items-center justify-between">
             {STEPS.map((s, i) => {
@@ -245,12 +245,12 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 dark:border-slate-800 p-8">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 dark:border-slate-800 p-4 md:p-6 lg:p-8">
           {/* Step 0: Camper Info */}
           {step === 0 && (
             <form onSubmit={handleNextCamper} className="space-y-5">
               <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6">Camper Information</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">First Name *</label>
                   <input
@@ -259,7 +259,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     placeholder="e.g. Abebe"
                   />
                   {camperForm.formState.errors.firstName && (
-                    <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.firstName.message}</p>
+                    <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.firstName.message}</p>
                   )}
                 </div>
                 <div>
@@ -270,13 +270,13 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     placeholder="e.g. Bekele"
                   />
                   {camperForm.formState.errors.lastName && (
-                    <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.lastName.message}</p>
+                    <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.lastName.message}</p>
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Date of Birth — Month / Day / Year */}
-                <div className="col-span-3">
+                <div className="col-span-1 md:col-span-3">
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Date of Birth *</label>
                   <div className="grid grid-cols-3 gap-3">
                     {/* Month */}
@@ -319,7 +319,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     </div>
                   </div>
                   {(camperForm.formState.errors.dobMonth || camperForm.formState.errors.dobDay || camperForm.formState.errors.dobYear) && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <p className="text-red-500 text-xs md:text-sm mt-1">
                       {camperForm.formState.errors.dobMonth?.message ||
                         camperForm.formState.errors.dobDay?.message ||
                         camperForm.formState.errors.dobYear?.message}
@@ -337,7 +337,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     <option value="FEMALE">Female</option>
                   </select>
                   {camperForm.formState.errors.gender && (
-                    <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.gender.message}</p>
+                    <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.gender.message}</p>
                   )}
                 </div>
                 <div>
@@ -349,7 +349,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     placeholder="e.g. 140"
                   />
                   {camperForm.formState.errors.height && (
-                    <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.height.message}</p>
+                    <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.height.message}</p>
                   )}
                 </div>
                 <div>
@@ -361,11 +361,11 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     placeholder="e.g. 35"
                   />
                   {camperForm.formState.errors.weight && (
-                    <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.weight.message}</p>
+                    <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.weight.message}</p>
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Grade Level *</label>
                   <select
@@ -380,7 +380,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     ))}
                   </select>
                   {camperForm.formState.errors.gradeLevel && (
-                    <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.gradeLevel.message}</p>
+                    <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.gradeLevel.message}</p>
                   )}
                 </div>
                 <div>
@@ -395,7 +395,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     <option value="YOUTH_L">Youth Large (L)</option>
                   </select>
                   {camperForm.formState.errors.tShirtSize && (
-                    <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.tShirtSize.message}</p>
+                    <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.tShirtSize.message}</p>
                   )}
                 </div>
               </div>
@@ -407,7 +407,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   placeholder="e.g. Addis Ababa International School"
                 />
                 {camperForm.formState.errors.schoolName && (
-                  <p className="text-red-500 text-xs mt-1">{camperForm.formState.errors.schoolName.message}</p>
+                  <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.schoolName.message}</p>
                 )}
               </div>
               <button
@@ -424,11 +424,11 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
             <form onSubmit={handleNextParent} className="space-y-5">
               <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Parent / Guardian Information</h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">Primary Contact</p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
                   <input {...parentForm.register("primaryName")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="Full name" />
-                  {parentForm.formState.errors.primaryName && <p className="text-red-500 text-xs mt-1">{parentForm.formState.errors.primaryName.message}</p>}
+                  {parentForm.formState.errors.primaryName && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.primaryName.message}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Relationship *</label>
@@ -439,24 +439,24 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     <option value="Guardian">Guardian</option>
                     <option value="Other">Other</option>
                   </select>
-                  {parentForm.formState.errors.primaryRelationship && <p className="text-red-500 text-xs mt-1">{parentForm.formState.errors.primaryRelationship.message}</p>}
+                  {parentForm.formState.errors.primaryRelationship && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.primaryRelationship.message}</p>}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number *</label>
                   <input {...parentForm.register("primaryPhone")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="+251 9XX XXX XXX" />
-                  {parentForm.formState.errors.primaryPhone && <p className="text-red-500 text-xs mt-1">{parentForm.formState.errors.primaryPhone.message}</p>}
+                  {parentForm.formState.errors.primaryPhone && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.primaryPhone.message}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address *</label>
                   <input type="email" {...parentForm.register("primaryEmail")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="email@example.com" />
-                  {parentForm.formState.errors.primaryEmail && <p className="text-red-500 text-xs mt-1">{parentForm.formState.errors.primaryEmail.message}</p>}
+                  {parentForm.formState.errors.primaryEmail && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.primaryEmail.message}</p>}
                 </div>
               </div>
               <div className="border-t border-slate-100 dark:border-slate-800 pt-5">
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">Secondary Contact (Optional)</p>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Name</label>
                     <input {...parentForm.register("secondaryName")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="Name" />
@@ -473,16 +473,16 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
               </div>
               <div className="border-t border-slate-100 dark:border-slate-800 pt-5">
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">Residential Address</p>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sub-City *</label>
                     <input {...parentForm.register("subCity")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="e.g. Bole" />
-                    {parentForm.formState.errors.subCity && <p className="text-red-500 text-xs mt-1">{parentForm.formState.errors.subCity.message}</p>}
+                    {parentForm.formState.errors.subCity && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.subCity.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Woreda *</label>
                     <input {...parentForm.register("district")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="e.g. 03" />
-                    {parentForm.formState.errors.district && <p className="text-red-500 text-xs mt-1">{parentForm.formState.errors.district.message}</p>}
+                    {parentForm.formState.errors.district && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.district.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">House No.</label>
@@ -583,7 +583,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     {locale === "am" ? "በህክምና እና የኃላፊነት ስምምነቱ እስማማለሁ" : "I agree to the liability and medical release"}
                   </span>
                 </label>
-                {waiverForm.formState.errors.liabilityRelease && <p className="text-red-500 text-xs mt-1">{waiverForm.formState.errors.liabilityRelease.message}</p>}
+                {waiverForm.formState.errors.liabilityRelease && <p className="text-red-500 text-xs md:text-sm mt-1">{waiverForm.formState.errors.liabilityRelease.message}</p>}
               </div>
 
               <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
@@ -609,7 +609,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     </span>
                   </label>
                 </div>
-                {waiverForm.formState.errors.mediaRelease && <p className="text-red-500 text-xs mt-1">{waiverForm.formState.errors.mediaRelease.message}</p>}
+                {waiverForm.formState.errors.mediaRelease && <p className="text-red-500 text-xs md:text-sm mt-1">{waiverForm.formState.errors.mediaRelease.message}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -618,14 +618,14 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     {locale === "am" ? "የወላጅ/ተወካይ ፊርማ (Parent Signature) *" : "Parent/Guardian Signature *"}
                   </label>
                   <input {...waiverForm.register("parentSignature")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder={locale === "am" ? "ሙሉ ስምዎን ይፃፉ" : "Type your full name"} />
-                  {waiverForm.formState.errors.parentSignature && <p className="text-red-500 text-xs mt-1">{waiverForm.formState.errors.parentSignature.message}</p>}
+                  {waiverForm.formState.errors.parentSignature && <p className="text-red-500 text-xs md:text-sm mt-1">{waiverForm.formState.errors.parentSignature.message}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     {locale === "am" ? "ቀን (Date) *" : "Date *"}
                   </label>
                   <input type="date" {...waiverForm.register("dateSigned")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" />
-                  {waiverForm.formState.errors.dateSigned && <p className="text-red-500 text-xs mt-1">{waiverForm.formState.errors.dateSigned.message}</p>}
+                  {waiverForm.formState.errors.dateSigned && <p className="text-red-500 text-xs md:text-sm mt-1">{waiverForm.formState.errors.dateSigned.message}</p>}
                 </div>
               </div>
 
@@ -763,3 +763,4 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+

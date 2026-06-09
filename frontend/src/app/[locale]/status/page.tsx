@@ -58,7 +58,7 @@ export default function StatusPage() {
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 pt-24 pb-16">
       <div className="max-w-lg mx-auto px-4">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Check Registration Status</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Check Registration Status</h1>
           <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500">Enter your email address or reference number to check your status.</p>
         </div>
 

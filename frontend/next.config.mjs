@@ -9,6 +9,17 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/uploads/**',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
         port: '4000',
@@ -16,13 +27,13 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'spine-summer-camp.onrender.com',
+        hostname: 'spine-summer-camp.vercel.app',
         pathname: '/uploads/**',
       },
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**',
+        hostname: 'spine-summer-camp.onrender.com',
+        pathname: '/uploads/**',
       },
     ],
   },
@@ -43,6 +54,11 @@ const nextConfig = {
       {
         source: '/api/upload-receipt',
         destination: `${BACKEND_URL}/upload-receipt`,
+      },
+      // Proxy receipt images through Next.js so the browser hits same-origin
+      {
+        source: '/uploads/:path*',
+        destination: `${BACKEND_URL}/uploads/:path*`,
       },
     ];
   },

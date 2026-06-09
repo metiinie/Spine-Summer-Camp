@@ -13,15 +13,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         try {
           const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
+          console.log('[NextAuth] Attempting login...');
+          console.log('[NextAuth] Backend URL:', backendUrl);
+          console.log('[NextAuth] Email:', credentials?.email);
+          
+          // Only send email and password (filter out NextAuth internal fields)
+          const loginPayload = {
+            email: credentials?.email,
+            password: credentials?.password,
+          };
+          
           const res = await fetch(`${backendUrl}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(credentials),
+            body: JSON.stringify(loginPayload),
           });
 
-          if (!res.ok) return null;
+          console.log('[NextAuth] Response status:', res.status);
+          console.log('[NextAuth] Response OK:', res.ok);
+
+          if (!res.ok) {
+            const errorText = await res.text();
+            console.log('[NextAuth] Error response:', errorText);
+            return null;
+          }
 
           const data = await res.json();
+          console.log('[NextAuth] Login successful:', data.email);
           // Assuming the NestJS backend returns { id, email, role, token }
           return {
             id: data.id,
@@ -29,7 +47,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             role: data.role,
             accessToken: data.token,
           };
-        } catch {
+        } catch (error) {
+          console.error('[NextAuth] Exception:', error);
           return null;
         }
       },

@@ -4,9 +4,15 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import helmet from 'helmet';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Serve uploaded receipt files statically at /uploads/*
+  app.useStaticAssets(join(__dirname, '..', 'public', 'uploads'), {
+    prefix: '/uploads',
+  });
 
   // Security headers
   app.use(helmet());
