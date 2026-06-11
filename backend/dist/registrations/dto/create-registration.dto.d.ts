@@ -2,7 +2,6 @@ export declare class CamperDto {
     firstName: string;
     lastName: string;
     age: number;
-    dateOfBirth: string;
     gender: string;
     gradeLevel: string;
     schoolName: string;
@@ -41,5 +40,6 @@ export declare class CreateRegistrationDto {
     parent: ParentDto;
     session: SessionDto;
     medical?: MedicalDto;
-    waiver?: WaiverDto;
+    waiver: WaiverDto;
+    idempotencyKey?: string;
 }

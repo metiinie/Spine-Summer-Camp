@@ -16,9 +16,9 @@ export class AuditService {
 
   async log(params: {
     action: AuditAction;
-    performedBy: string; // user ID
+    performedBy?: string | null; // user ID (null for system/public)
     registrationId?: string;
-    details?: string;
+    details?: any;
   }) {
     try {
       await this.prisma.auditLog.create({

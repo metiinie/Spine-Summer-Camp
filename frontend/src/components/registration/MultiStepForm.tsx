@@ -52,6 +52,7 @@ interface FullFormData {
   session: SessionFormData;
   medical: MedicalFormData;
   waiver: WaiverFormData;
+  idempotencyKey: string;
 }
 
 interface MultiStepFormProps {
@@ -70,10 +71,12 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setFormData(parsed.data || {});
+        setFormData({ idempotencyKey: crypto.randomUUID(), ...(parsed.data || {}) });
         setStep(parsed.step || 0);
+        return;
       } catch {}
     }
+    setFormData({ idempotencyKey: crypto.randomUUID() });
   }, []);
 
   // Save to localStorage whenever step/data changes
@@ -104,20 +107,10 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
 
   const handleNextCamper = camperForm.handleSubmit((data) => {
     // Parse numeric fields from string inputs
-    const day = parseInt(data.dobDay, 10);
-    const year = parseInt(data.dobYear, 10);
-    const height = parseFloat(data.height);
-    const weight = parseFloat(data.weight);
+    const height = parseFloat(data.height as any);
+    const weight = parseFloat(data.weight as any);
 
     // Validate numeric ranges
-    if (isNaN(day) || day < 1 || day > 31) {
-      camperForm.setError("dobDay", { message: "Invalid day (1–31)" });
-      return;
-    }
-    if (isNaN(year) || year < 2000 || year > new Date().getFullYear()) {
-      camperForm.setError("dobYear", { message: `Invalid year (2000–${new Date().getFullYear()})` });
-      return;
-    }
     if (isNaN(height) || height < 50 || height > 220) {
       camperForm.setError("height", { message: "Height must be 50–220 cm" });
       return;
@@ -127,25 +120,8 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
       return;
     }
 
-    // Build ISO date and validate it
-    const monthNum = MONTHS.indexOf(data.dobMonth) + 1;
-    const isoDate = `${year}-${String(monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    const dob = new Date(isoDate);
-    if (isNaN(dob.getTime())) {
-      camperForm.setError("dobDay", { message: "Invalid date — please check day, month and year" });
-      return;
-    }
-    const ageDifMs = Date.now() - dob.getTime();
-    const calculatedAge = Math.abs(new Date(ageDifMs).getUTCFullYear() - 1970);
-    if (calculatedAge < 4 || calculatedAge > 16) {
-      camperForm.setError("dobYear", { message: "Age must be between 4 and 16 years old" });
-      return;
-    }
-
     const camperData: StoredCamperData = {
       ...(data as CamperFormData),
-      dateOfBirth: isoDate,
-      age: calculatedAge,
       height: String(height),
       weight: String(weight),
     };
@@ -174,10 +150,11 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
     setIsSubmitting(true);
     try {
       // Convert string numeric fields to numbers for the backend
+      const { ...restCamper } = formData.camper as any;
       const payload = {
         ...formData,
         camper: {
-          ...formData.camper,
+          ...restCamper,
           height: formData.camper.height ? parseFloat(formData.camper.height) : undefined,
           weight: formData.camper.weight ? parseFloat(formData.camper.weight) : undefined,
         },
@@ -275,55 +252,16 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Date of Birth — Month / Day / Year */}
-                <div className="col-span-1 md:col-span-3">
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Date of Birth *</label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {/* Month */}
-                    <div className="relative">
-                      <span className="absolute -top-2.5 left-3 text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 px-1 pointer-events-none">Month</span>
-                      <select
-                        {...camperForm.register("dobMonth")}
-                        className="w-full px-3 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-sky-400 dark:focus:border-sky-500 outline-none transition appearance-none"
-                      >
-                        <option value=""></option>
-                        {MONTHS.map((m) => (
-                          <option key={m} value={m}>{m}</option>
-                        ))}
-                      </select>
-                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">▼</span>
-                    </div>
-                    {/* Day */}
-                    <div className="relative">
-                      <span className="absolute -top-2.5 left-3 text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 px-1 pointer-events-none">Day</span>
-                      <input
-                        type="number"
-                        {...camperForm.register("dobDay")}
-                        min={1}
-                        max={31}
-                        className="w-full px-3 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-sky-400 dark:focus:border-sky-500 outline-none transition [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                        placeholder="1"
-                      />
-                    </div>
-                    {/* Year */}
-                    <div className="relative">
-                      <span className="absolute -top-2.5 left-3 text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 px-1 pointer-events-none">Year</span>
-                      <input
-                        type="number"
-                        {...camperForm.register("dobYear")}
-                        min={2000}
-                        max={new Date().getFullYear()}
-                        className="w-full px-3 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-sky-400 dark:focus:border-sky-500 outline-none transition [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                        placeholder="2015"
-                      />
-                    </div>
-                  </div>
-                  {(camperForm.formState.errors.dobMonth || camperForm.formState.errors.dobDay || camperForm.formState.errors.dobYear) && (
-                    <p className="text-red-500 text-xs md:text-sm mt-1">
-                      {camperForm.formState.errors.dobMonth?.message ||
-                        camperForm.formState.errors.dobDay?.message ||
-                        camperForm.formState.errors.dobYear?.message}
-                    </p>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Age *</label>
+                  <input
+                    type="number"
+                    {...camperForm.register("age")}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
+                    placeholder="e.g. 10"
+                  />
+                  {camperForm.formState.errors.age && (
+                    <p className="text-red-500 text-xs md:text-sm mt-1">{camperForm.formState.errors.age.message}</p>
                   )}
                 </div>
                 <div>
@@ -644,7 +582,6 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
               <div className="space-y-4">
                 <Section title="Camper Information">
                   <Row label="Name" value={`${formData.camper.firstName} ${formData.camper.lastName}`} />
-                  <Row label="Date of Birth" value={`${formData.camper.dobMonth} ${formData.camper.dobDay}, ${formData.camper.dobYear}`} />
                   <Row label="Age" value={String(formData.camper.age)} />
                   <Row label="Gender" value={formData.camper.gender} />
                   {formData.camper.height ? <Row label="Height" value={`${formData.camper.height} cm`} /> : null}

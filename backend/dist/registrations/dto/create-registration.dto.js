@@ -16,7 +16,6 @@ class CamperDto {
     firstName;
     lastName;
     age;
-    dateOfBirth;
     gender;
     gradeLevel;
     schoolName;
@@ -43,10 +42,6 @@ __decorate([
     (0, class_validator_1.Max)(18),
     __metadata("design:type", Number)
 ], CamperDto.prototype, "age", void 0);
-__decorate([
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], CamperDto.prototype, "dateOfBirth", void 0);
 __decorate([
     (0, class_validator_1.IsIn)(['MALE', 'FEMALE']),
     __metadata("design:type", String)
@@ -219,6 +214,7 @@ class CreateRegistrationDto {
     session;
     medical;
     waiver;
+    idempotencyKey;
 }
 exports.CreateRegistrationDto = CreateRegistrationDto;
 __decorate([
@@ -245,7 +241,13 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.ValidateNested)(),
+    IsNotEmptyObject(),
     (0, class_transformer_1.Type)(() => WaiverDto),
     __metadata("design:type", WaiverDto)
 ], CreateRegistrationDto.prototype, "waiver", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateRegistrationDto.prototype, "idempotencyKey", void 0);
 //# sourceMappingURL=create-registration.dto.js.map

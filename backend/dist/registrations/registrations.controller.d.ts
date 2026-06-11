@@ -12,8 +12,8 @@ export declare class RegistrationsController {
     }>;
     checkStatus(query: string): Promise<{
         referenceNumber: string;
-        status: string;
-        session: string;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
+        session: import(".prisma/client").$Enums.SessionType;
         amount: string;
         createdAt: string;
         rejectionReason: string | null;
@@ -29,11 +29,10 @@ export declare class RegistrationsController {
             firstName: string;
             lastName: string;
             age: number;
-            dateOfBirth: Date;
-            gender: string;
+            gender: import(".prisma/client").$Enums.Gender;
             gradeLevel: string;
             schoolName: string;
-            tShirtSize: string;
+            tShirtSize: import(".prisma/client").$Enums.TShirtSize;
             height: number | null;
             weight: number | null;
         } | null;
@@ -70,13 +69,16 @@ export declare class RegistrationsController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        session: string;
-        status: string;
-        rejectionReason: string | null;
-        adminNote: string | null;
+        session: import(".prisma/client").$Enums.SessionType;
+        idempotencyKey: string | null;
         referenceNumber: string;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
         amount: import("@prisma/client/runtime/library").Decimal;
         receiptUrl: string | null;
+        adminNote: string | null;
+        rejectionReason: string | null;
+        campYear: number;
+        deletedAt: Date | null;
     }>;
     getRegistrations(query: FindAllQueryDto): Promise<{
         data: ({
@@ -86,11 +88,10 @@ export declare class RegistrationsController {
                 firstName: string;
                 lastName: string;
                 age: number;
-                dateOfBirth: Date;
-                gender: string;
+                gender: import(".prisma/client").$Enums.Gender;
                 gradeLevel: string;
                 schoolName: string;
-                tShirtSize: string;
+                tShirtSize: import(".prisma/client").$Enums.TShirtSize;
                 height: number | null;
                 weight: number | null;
             } | null;
@@ -127,13 +128,16 @@ export declare class RegistrationsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            session: string;
-            status: string;
-            rejectionReason: string | null;
-            adminNote: string | null;
+            session: import(".prisma/client").$Enums.SessionType;
+            idempotencyKey: string | null;
             referenceNumber: string;
+            status: import(".prisma/client").$Enums.RegistrationStatus;
             amount: import("@prisma/client/runtime/library").Decimal;
             receiptUrl: string | null;
+            adminNote: string | null;
+            rejectionReason: string | null;
+            campYear: number;
+            deletedAt: Date | null;
         })[];
         meta: {
             total: number;

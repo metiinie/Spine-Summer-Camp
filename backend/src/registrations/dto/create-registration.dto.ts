@@ -8,7 +8,6 @@ export class CamperDto {
   @IsString() @IsNotEmpty() @MaxLength(100) firstName: string;
   @IsString() @IsNotEmpty() @MaxLength(100) lastName: string;
   @IsInt() @Min(4) @Max(18) age: number;
-  @IsDateString() dateOfBirth: string;
   @IsIn(['MALE', 'FEMALE']) gender: string;
   @IsString() @IsNotEmpty() @MaxLength(50) gradeLevel: string;
   @IsString() @IsNotEmpty() @MaxLength(150) schoolName: string;
@@ -56,5 +55,9 @@ export class CreateRegistrationDto {
   @ValidateNested() @Type(() => ParentDto) parent: ParentDto;
   @ValidateNested() @Type(() => SessionDto) session: SessionDto;
   @IsOptional() @ValidateNested() @Type(() => MedicalDto) medical?: MedicalDto;
-  @IsOptional() @ValidateNested() @Type(() => WaiverDto) waiver?: WaiverDto;
+  @IsOptional() @ValidateNested() @IsNotEmptyObject() @Type(() => WaiverDto) waiver: WaiverDto;
+
+  @IsString()
+  @IsOptional()
+  idempotencyKey?: string;
 }

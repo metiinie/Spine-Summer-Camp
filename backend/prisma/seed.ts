@@ -23,7 +23,7 @@ async function main() {
       data: {
         email: u.email,
         passwordHash,
-        role: u.role,
+        role: u.role as any,
       },
     });
 

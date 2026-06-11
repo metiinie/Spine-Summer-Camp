@@ -6,8 +6,8 @@ export declare class AuditService {
     constructor(prisma: PrismaService);
     log(params: {
         action: AuditAction;
-        performedBy: string;
+        performedBy?: string | null;
         registrationId?: string;
-        details?: string;
+        details?: any;
     }): Promise<void>;
 }
