@@ -63,6 +63,7 @@ export function AdminDashboardClient() {
   const [adminNote, setAdminNote] = useState("");
   const [noteLoading, setNoteLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const itemsPerPage = 10;
 
   const fetchRegistrations = useCallback(async () => {
@@ -127,9 +128,20 @@ export function AdminDashboardClient() {
         setSelected(null);
         setRejectReason("");
         setShowRejectInput(false);
+        setNotification({
+          type: "success",
+          message: `Registration successfully ${action === "approve" ? "approved" : "rejected"}. An email notification has been sent to the family.`,
+        });
+        setTimeout(() => setNotification(null), 5000);
         fetchRegistrations();
+      } else {
+        setNotification({ type: "error", message: data.message || "An error occurred." });
+        setTimeout(() => setNotification(null), 5000);
       }
-    } catch {}
+    } catch {
+      setNotification({ type: "error", message: "Network error occurred." });
+      setTimeout(() => setNotification(null), 5000);
+    }
     setActionLoading(false);
   };
 
@@ -196,6 +208,23 @@ export function AdminDashboardClient() {
           </div>
         </div>
       </header>
+
+      {/* Global Notification */}
+      {notification && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4">
+          <div className={`px-4 py-3 rounded-xl shadow-lg border flex items-center gap-3 ${
+            notification.type === "success" 
+              ? "bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-300"
+              : "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/30 dark:border-red-800 dark:text-red-300"
+          }`}>
+            {notification.type === "success" ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+            <span className="font-medium text-sm">{notification.message}</span>
+            <button onClick={() => setNotification(null)} className="ml-2 hover:opacity-70 transition">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats */}
