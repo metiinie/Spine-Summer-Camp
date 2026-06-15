@@ -29,9 +29,10 @@ export class UploadsController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './public/uploads',
-        filename: (_req, _file, cb) => {
-          // UUID filename — not guessable, not based on original name
-          cb(null, `receipt-${randomUUID()}`);
+        filename: (_req, file, cb) => {
+          // UUID filename with original extension preserved
+          const ext = file.originalname.split('.').pop()?.toLowerCase() ?? '';
+          cb(null, ext ? `receipt-${randomUUID()}.${ext}` : `receipt-${randomUUID()}`);
         },
       }),
       limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
