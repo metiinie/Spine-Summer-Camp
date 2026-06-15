@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { Search, CheckCircle2, Clock, Upload, XCircle, AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const STATUS_TIMELINE = [
-  { key: "PENDING_PAYMENT", label: "Submitted", icon: CheckCircle2 },
-  { key: "RECEIPT_UPLOADED", label: "Receipt Uploaded", icon: Upload },
-  { key: "UNDER_REVIEW", label: "Under Review", icon: Clock },
+  { key: "PENDING_PAYMENT", icon: CheckCircle2 },
+  { key: "RECEIPT_UPLOADED", icon: Upload },
+  { key: "UNDER_REVIEW", icon: Clock },
 ];
 
 const STATUS_ORDER = ["PENDING_PAYMENT", "RECEIPT_UPLOADED", "UNDER_REVIEW", "APPROVED", "REJECTED"];
@@ -22,6 +23,7 @@ interface RegistrationResult {
 }
 
 export default function StatusPage() {
+  const t = useTranslations("status");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<RegistrationResult | null>(null);
@@ -39,7 +41,7 @@ export default function StatusPage() {
       const res = await fetch(`/api/registrations/status?q=${encodeURIComponent(query)}`);
       const data = await res.json();
       if (!res.ok || !data) {
-        setError("No registration found with that email or reference number.");
+        setError(t("notFound"));
       } else {
         setResult(data);
       }
@@ -58,18 +60,18 @@ export default function StatusPage() {
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 pt-24 pb-16">
       <div className="max-w-lg mx-auto px-4">
         <div className="text-center mb-10">
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Check Registration Status</h1>
-          <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500">Enter your email address or reference number to check your status.</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t("title")}</h1>
+          <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500">{t("subtitle")}</p>
         </div>
 
         <form onSubmit={handleSearch} className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-md border border-slate-100 dark:border-slate-800 mb-6">
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email Address or Reference Number</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t("emailLabel")}</label>
           <div className="flex gap-2">
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="email@example.com or SCAMP-2026-XXXXX"
+              placeholder={t("emailPlaceholder")}
               className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
             />
             <button
@@ -114,7 +116,10 @@ export default function StatusPage() {
                       )}
                     </div>
                     <div className="pt-2">
-                      <p className={`font-semibold ${isComplete ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"}`}>{s.label}</p>
+                      <p className={`font-semibold ${isComplete ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"}`}>
+                        {/* @ts-expect-error - Dynamic key usage */}
+                        {t(`timeline.${s.key}`)}
+                      </p>
                     </div>
                   </div>
                 );
@@ -122,11 +127,11 @@ export default function StatusPage() {
 
               {/* Final status */}
               <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isApproved ? "bg-emerald-50 dark:bg-emerald-900/200 text-white" : isRejected ? "bg-red-100 dark:bg-red-900/50 text-red-600" : "bg-slate-100 dark:bg-slate-800 text-slate-300"}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isApproved ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600" : isRejected ? "bg-red-100 dark:bg-red-900/50 text-red-600" : "bg-slate-100 dark:bg-slate-800 text-slate-300"}`}>
                   {isRejected ? <XCircle className="w-5 h-5" /> : <CheckCircle2 className="w-5 h-5" />}
                 </div>
                 <p className={`font-semibold ${isApproved ? "text-emerald-700 dark:text-emerald-300" : isRejected ? "text-red-600" : "text-slate-400 dark:text-slate-500"}`}>
-                  {isApproved ? "Approved ✓" : isRejected ? "Rejected" : "Decision Pending"}
+                  {isApproved ? t("timeline.APPROVED") : isRejected ? t("timeline.REJECTED") : "Decision Pending"}
                 </p>
               </div>
             </div>

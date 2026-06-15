@@ -22,7 +22,7 @@ export function PublicHeader({ locale, translations }: PublicHeaderProps) {
   const router = useRouter();
 
   const otherLocale = locale === "en" ? "am" : "en";
-  const otherLocaleLabel = locale === "en" ? "አማ" : "EN";
+  const otherLocaleLabel = locale === "en" ? "አማርኛ" : "EN";
 
   const switchLanguage = () => {
     document.cookie = `NEXT_LOCALE=${otherLocale}; path=/; max-age=31536000`;
@@ -42,7 +42,7 @@ export function PublicHeader({ locale, translations }: PublicHeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href={`/`} className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1 border border-slate-100 dark:border-slate-800">
+            <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1 border border-slate-100 dark:border-slate-800">
               <div className="relative w-full h-full">
                 <Image src="/logo-1.png" alt="Spine" fill className="object-contain" />
               </div>

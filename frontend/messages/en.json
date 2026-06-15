@@ -11,7 +11,7 @@
       "badge": "Summer 2026",
       "title": "Spine Summer Camp",
       "subtitle": "An unforgettable summer of learning, creativity, and fun for children ages 4–16.",
-      "partnerText1": "Brought to you by the expert educational minds at <spine>Spine Consultancy</spine> and hosted at the prestigious <ghion>Ghion Hotel</ghion>.",
+      "partnerText1": "Brought to you by the educational experts at <spine>Spine Consultancy</spine> and hosted at the prestigious <ghion>Ghion Hotel</ghion>.",
       "partnerText2": "We have carefully crafted a unique environment where your child can thrive, develop new skills, and create lifelong memories.",
       "cta": "Register Now",
       "aboutUs": "Learn More About Us"
@@ -24,14 +24,24 @@
         "session": "Session 1",
         "hours": "3:00 – 6:30 (Local Time)",
         "price": "26,000",
-        "features": ["Critical Thinking And Public Speech", "Arts & Crafts", "Swimming", "Snacks included"]
+        "features": [
+          "Critical Thinking & Public Speaking",
+          "Arts & Crafts",
+          "Swimming",
+          "Nutritious Snacks Included"
+        ]
       },
       "fullDay": {
         "title": "Full Day",
         "session": "Session 2",
         "hours": "3:00 – 10:00 (Local Time)",
         "price": "40,000",
-        "features": ["All half-day activities", "Health and fitness assessments with tailored nutrition", "Chess & Team Games", "Cycling & Football"]
+        "features": [
+          "All half-day activities",
+          "Health and fitness assessments with tailored nutrition",
+          "Chess & Team Games",
+          "Cycling & Football"
+        ]
       },
       "discounts": {
         "title": "Discounts",
@@ -49,8 +59,8 @@
           "answer": "Spine Summer Camp accepts children between the ages of 4 and 16. We group campers by age to ensure age-appropriate activities."
         },
         {
-          "question": "What is the payment method?",
-          "answer": "Payment is made via CBE Birr transfer. After registering, you will receive bank account details and must upload your receipt to confirm enrollment."
+          "question": "What payment methods are accepted?",
+          "answer": "Payment is accepted via CBE Birr transfer. After registering, you will receive bank account details and must upload your receipt to confirm enrollment."
         },
         {
           "question": "What should my child bring?",
@@ -61,7 +71,7 @@
           "answer": "Each child may only register for one session. If you have multiple children, you may register each child separately for different sessions."
         },
         {
-          "question": "How long does approval take?",
+          "question": "How long does it take to confirm my registration?",
           "answer": "After uploading your payment receipt, we review it within 24 hours and send a confirmation email to the parent's email address provided during registration."
         }
       ]
@@ -91,7 +101,7 @@
           "image": "/activities/cultural-dance.jpg"
         },
         {
-          "title": "Empathy and Self Awareness",
+          "title": "Empathy & Self-Awareness",
           "description": "Sessions designed to build emotional intelligence and self-confidence.",
           "image": "/activities/empathy.jpg"
         },
@@ -101,7 +111,7 @@
           "image": "/activities/football.jpg"
         },
         {
-          "title": "Creative Fun Activities",
+          "title": "Creative & Fun Activities",
           "description": "Arts, crafts, and imaginative play to spark creativity.",
           "image": "/activities/arts-crafts.jpg"
         },
@@ -116,7 +126,7 @@
           "image": "/activities/chess.jpg"
         },
         {
-          "title": "Bike",
+          "title": "Cycling",
           "description": "Cycling sessions to improve coordination, balance, and physical health.",
           "image": "/activities/cycling.jpg"
         },
@@ -138,7 +148,7 @@
         "review": "Review"
       },
       "camper": {
-        "title": "Camper Information",
+        "title": "Camper Details",
         "firstName": "First Name",
         "lastName": "Last Name",
         "dateOfBirth": "Date of Birth",
@@ -154,7 +164,10 @@
           "YOUTH_S": "Youth Small (S)",
           "YOUTH_M": "Youth Medium (M)",
           "YOUTH_L": "Youth Large (L)"
-        }
+        },
+        "age": "Age",
+        "height": "Height (cm)",
+        "weight": "Weight (kg)"
       },
       "parent": {
         "title": "Parent / Guardian Information",
@@ -167,7 +180,9 @@
         "address": "Residential Address",
         "subCity": "Sub-City",
         "district": "Woreda / District",
-        "houseNumber": "House Number (Optional)"
+        "houseNumber": "House Number (Optional)",
+        "nameLabel": "Name",
+        "phoneLabel": "Phone"
       },
       "session": {
         "title": "Select Your Session",
@@ -177,11 +192,11 @@
         "title": "Medical Information",
         "subtitle": "All fields are optional. Leave blank if not applicable.",
         "allergies": "Allergies",
-        "allergiesPlaceholder": "List any food or environmental allergies",
+        "allergiesPlaceholder": "List any food or environmental allergies...",
         "conditions": "Medical Conditions / Current Medications",
-        "conditionsPlaceholder": "Describe any medical conditions or medications the camp staff should know about",
+        "conditionsPlaceholder": "Describe any conditions or medications staff should know about...",
         "dietary": "Dietary Restrictions",
-        "dietaryPlaceholder": "e.g., vegetarian, halal, nut-free"
+        "dietaryPlaceholder": "e.g. vegetarian, halal, nut-free..."
       },
       "review": {
         "title": "Review Your Registration",
@@ -195,14 +210,14 @@
       "buttons": {
         "next": "Next",
         "back": "Back",
-        "submit": "Submit Registration",
+        "submit": "Submit Registration ✓",
         "submitting": "Submitting..."
       }
     },
     "payment": {
       "title": "Complete Your Payment",
       "referenceTitle": "Your Registration Reference",
-      "instructions": "Payment Instructions",
+      "instructions": "How to Pay",
       "bank": "Bank",
       "accountNumber": "Account Number",
       "accountName": "Account Name",
@@ -214,10 +229,21 @@
       "uploaded": "Receipt uploaded successfully!",
       "uploadBtn": "Select File",
       "confirmationNote": "We will review your payment and confirm your registration within 24 hours. A confirmation email will be sent to the address you provided.",
-      "importantNote": "Important: Make sure the exact amount is transferred. Include your reference number in the transfer memo if possible."
+      "importantNote": "Important: Make sure the exact amount is transferred. Include your reference number in the transfer memo if possible.",
+      "submittedTitle": "Registration Submitted!",
+      "submittedSubtitle": "{firstName}, your registration has been received. Complete your payment below to secure your spot.",
+      "saveNumber": "Save this number to check your registration status",
+      "sessionLabel": "Session",
+      "halfDay": "Session 1 – Half Day",
+      "fullDay": "Session 2 – Full Day",
+      "clickToBrowse": "or click to browse files",
+      "fileTooLarge": "File is too large. Maximum size is 5MB.",
+      "invalidFileType": "Invalid file type. Please upload JPG, PNG, or PDF.",
+      "uploadFailed": "Upload failed. Please try again.",
+      "reviewNote": "We will review and confirm within 24 hours."
     },
     "status": {
-      "title": "Check Registration Status",
+      "title": "Track Your Registration Status",
       "subtitle": "Enter your email address or reference number to check your status",
       "emailLabel": "Email Address or Reference Number",
       "emailPlaceholder": "parent@email.com or SCAMP-2026-XXXXX",

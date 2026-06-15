@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -60,6 +61,7 @@ interface MultiStepFormProps {
 }
 
 export function MultiStepForm({ locale }: MultiStepFormProps) {
+  const t = useTranslations("register");
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<Partial<FullFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -192,8 +194,8 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
         <div className="flex-1 w-full max-w-2xl mx-auto">
           {/* Progress Header */}
         <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">Camp Registration</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-center mb-8">Complete all steps to register your child</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">{t("title")}</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-center mb-8">{t("subtitle")}</p>
           <div className="flex items-center justify-between">
             {STEPS.map((s, i) => {
               const Icon = s.icon;
@@ -205,7 +207,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                         i < step
                           ? "bg-emerald-500 text-white"
                           : i === step
-                          ? "bg-sky-500 text-white ring-4 ring-sky-200"
+                          ? "bg-sky-500 text-white ring-4 ring-sky-200 dark:ring-sky-900"
                           : "bg-slate-200 dark:bg-slate-800 text-slate-400"
                       }`}
                     >
@@ -233,10 +235,10 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
           {/* Step 0: Camper Info */}
           {step === 0 && (
             <form onSubmit={handleNextCamper} className="space-y-5">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6">Camper Information</h2>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6">{t("camper.title")}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">First Name *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.firstName")} *</label>
                   <input
                     {...camperForm.register("firstName")}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
@@ -247,7 +249,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Last Name *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.lastName")} *</label>
                   <input
                     {...camperForm.register("lastName")}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
@@ -260,7 +262,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Age *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.age")} *</label>
                   <input
                     type="number"
                     {...camperForm.register("age")}
@@ -272,7 +274,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Gender *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.gender")} *</label>
                   <select
                     {...camperForm.register("gender")}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
@@ -286,7 +288,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Height (cm) *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.height")} *</label>
                   <input
                     type="number"
                     {...camperForm.register("height")}
@@ -298,7 +300,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Weight (kg) *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.weight")} *</label>
                   <input
                     type="number"
                     {...camperForm.register("weight")}
@@ -312,7 +314,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Grade Level *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.gradeLevel")} *</label>
                   <select
                     {...camperForm.register("gradeLevel")}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
@@ -329,7 +331,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">T-Shirt Size *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.tShirtSize")} *</label>
                   <select
                     {...camperForm.register("tShirtSize")}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
@@ -345,7 +347,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">School Name *</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("camper.schoolName")} *</label>
                 <input
                   {...camperForm.register("schoolName")}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
@@ -367,16 +369,16 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
           {/* Step 1: Parent Info */}
           {step === 1 && (
             <form onSubmit={handleNextParent} className="space-y-5">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Parent / Guardian Information</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">Primary Contact</p>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t("parent.title")}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">{t("parent.primaryContact")}</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.name")} *</label>
                   <input {...parentForm.register("primaryName")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="Full name" />
                   {parentForm.formState.errors.primaryName && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.primaryName.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Relationship *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.relationship")} *</label>
                   <select {...parentForm.register("primaryRelationship")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition">
                     <option value="">Select</option>
                     <option value="Mother">Mother</option>
@@ -389,25 +391,25 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.phone")} *</label>
                   <input {...parentForm.register("primaryPhone")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="+251 9XX XXX XXX" />
                   {parentForm.formState.errors.primaryPhone && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.primaryPhone.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.email")} *</label>
                   <input type="email" {...parentForm.register("primaryEmail")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="email@example.com" />
                   {parentForm.formState.errors.primaryEmail && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.primaryEmail.message}</p>}
                 </div>
               </div>
               <div className="border-t border-slate-100 dark:border-slate-800 pt-5">
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">Secondary Contact (Optional)</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">{t("parent.secondaryContact")}</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Name</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.nameLabel")}</label>
                     <input {...parentForm.register("secondaryName")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="Name" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.phoneLabel")}</label>
                     <input {...parentForm.register("secondaryPhone")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="Phone" />
                   </div>
                   <div>
@@ -417,27 +419,27 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                 </div>
               </div>
               <div className="border-t border-slate-100 dark:border-slate-800 pt-5">
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">Residential Address</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-semibold uppercase tracking-wide">{t("parent.address")}</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sub-City *</label>
-                    <input {...parentForm.register("subCity")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="e.g. Bole" />
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.subCity")} *</label>
+                    <input {...parentForm.register("subCity")} autoComplete="off" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="e.g. Bole" />
                     {parentForm.formState.errors.subCity && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.subCity.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Woreda *</label>
-                    <input {...parentForm.register("district")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="e.g. 03" />
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.district")} *</label>
+                    <input {...parentForm.register("district")} autoComplete="off" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="e.g. 03" />
                     {parentForm.formState.errors.district && <p className="text-red-500 text-xs md:text-sm mt-1">{parentForm.formState.errors.district.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">House No.</label>
-                    <input {...parentForm.register("houseNumber")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="Optional" />
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("parent.houseNumber")}</label>
+                    <input {...parentForm.register("houseNumber")} autoComplete="off" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition" placeholder="Optional" />
                   </div>
                 </div>
               </div>
               <div className="flex gap-3 mt-4">
-                <button type="button" onClick={() => setStep(0)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← Back</button>
-                <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">Next: Session →</button>
+                <button type="button" onClick={() => setStep(0)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← {t("buttons.back")}</button>
+                <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">{t("buttons.next")}: {t("steps.session")} →</button>
               </div>
             </form>
           )}
@@ -445,8 +447,8 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
           {/* Step 2: Session */}
           {step === 2 && (
             <form onSubmit={handleNextSession} className="space-y-5">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Select Your Session</h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-6">Choose the session that works best for your family</p>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t("session.title")}</h2>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">{t("session.subtitle")}</p>
               <div className="space-y-4">
                 {(["HALF_DAY", "FULL_DAY"] as const).map((key) => {
                   const config = SESSION_CONFIG[key];
@@ -455,7 +457,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                     <label
                       key={key}
                       className={`flex items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all ${
-                        selected ? "border-sky-400 bg-sky-50" : "border-slate-200 dark:border-slate-700 hover:border-sky-200"
+                        selected ? "border-sky-400 bg-sky-50 dark:bg-sky-900/20" : "border-slate-200 dark:border-slate-700 hover:border-sky-200 dark:hover:border-sky-500"
                       }`}
                     >
                       <input type="radio" value={key} {...sessionForm.register("session")} className="mt-1 accent-sky-500" />
@@ -476,8 +478,8 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                 <p className="text-red-500 text-sm">{sessionForm.formState.errors.session.message}</p>
               )}
               <div className="flex gap-3 mt-4">
-                <button type="button" onClick={() => setStep(1)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← Back</button>
-                <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">Next: Medical →</button>
+                <button type="button" onClick={() => setStep(1)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← {t("buttons.back")}</button>
+                <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">{t("buttons.next")}: {t("steps.medical")} →</button>
               </div>
             </form>
           )}
@@ -485,23 +487,23 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
           {/* Step 3: Medical */}
           {step === 3 && (
             <form onSubmit={handleNextMedical} className="space-y-5">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Medical Information</h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-4">All fields are optional. Leave blank if not applicable.</p>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t("medical.title")}</h2>
+              <p className="text-slate-500 dark:text-slate-400 mb-4">{t("medical.subtitle")}</p>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Allergies</label>
-                <textarea {...medicalForm.register("allergies")} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition resize-none" placeholder="List any food or environmental allergies..." />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("medical.allergies")}</label>
+                <textarea {...medicalForm.register("allergies")} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition resize-none" placeholder={t("medical.allergiesPlaceholder")} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Medical Conditions / Current Medications</label>
-                <textarea {...medicalForm.register("conditions")} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition resize-none" placeholder="Describe any conditions or medications staff should know about..." />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("medical.conditions")}</label>
+                <textarea {...medicalForm.register("conditions")} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition resize-none" placeholder={t("medical.conditionsPlaceholder")} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Dietary Restrictions</label>
-                <textarea {...medicalForm.register("dietary")} rows={2} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition resize-none" placeholder="e.g. vegetarian, halal, nut-free..." />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("medical.dietary")}</label>
+                <textarea {...medicalForm.register("dietary")} rows={2} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 dark:text-white focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition resize-none" placeholder={t("medical.dietaryPlaceholder")} />
               </div>
               <div className="flex gap-3 mt-4">
-                <button type="button" onClick={() => setStep(2)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← Back</button>
-                <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">Next: Consent →</button>
+                <button type="button" onClick={() => setStep(2)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← {t("buttons.back")}</button>
+                <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">{t("buttons.next")}: {locale === "am" ? "ስምምነት" : "Consent"} →</button>
               </div>
             </form>
           )}
@@ -575,8 +577,8 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
               </div>
 
               <div className="flex gap-3 mt-4">
-                <button type="button" onClick={() => setStep(3)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← Back</button>
-                <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">Review →</button>
+                <button type="button" onClick={() => setStep(3)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← {t("buttons.back")}</button>
+                <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">{t("steps.review")} →</button>
               </div>
             </form>
           )}
@@ -584,8 +586,8 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
           {/* Step 5: Review */}
           {step === 5 && formData.camper && formData.parent && formData.session && formData.waiver && (
             <div>
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Review Your Registration</h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-6">Please verify all information before submitting.</p>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t("review.title")}</h2>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">{t("review.subtitle")}</p>
               <div className="space-y-4">
                 <Section title="Camper Information">
                   <Row label="Name" value={`${formData.camper.firstName} ${formData.camper.lastName}`} />
@@ -629,7 +631,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                 )}
               </div>
               <div className="flex gap-3 mt-6">
-                <button type="button" onClick={() => setStep(4)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← Back</button>
+                <button type="button" onClick={() => setStep(4)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← {t("buttons.back")}</button>
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
@@ -643,47 +645,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
         </div>
       </div>
       
-      {/* Right Side Panel: Discounts */}
-      <div className="hidden lg:block w-80 sticky top-28">
-        <div className="bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-900/20 dark:to-orange-900/20 rounded-3xl p-6 border border-rose-100 dark:border-rose-900/50 shadow-lg">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center text-rose-500">
-              <Star className="w-5 h-5" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-              {locale === "am" ? "ልዩ ቅናሾች" : "Special Discounts"}
-            </h3>
-          </div>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-            {locale === "am"
-              ? "ብዙ ልጆችን ለሚያስመዘግቡ ቤተሰቦች ታላቅ ቅናሾች አዘጋጅተናል!"
-              : "Registering siblings? Take advantage of our family discounts!"}
-          </p>
-          <ul className="space-y-4">
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold text-slate-800 dark:text-slate-200 block text-lg">20% OFF</span>
-                <span className="text-sm text-slate-500 dark:text-slate-400">{locale === "am" ? "ለ2 ልጆች ሲመዘገቡ" : "for 2 Kids"}</span>
-              </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold text-slate-800 dark:text-slate-200 block text-lg">40% OFF</span>
-                <span className="text-sm text-slate-500 dark:text-slate-400">{locale === "am" ? "ለ3 ልጆች ሲመዘገቡ" : "for 3 Kids"}</span>
-              </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold text-slate-800 dark:text-slate-200 block text-lg">1 FREE</span>
-                <span className="text-sm text-slate-500 dark:text-slate-400">{locale === "am" ? "ለ5 ልጆች ሲመዘገቡ (1 በነፃ)" : "for 5 Kids"}</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
+
       
       </div>
     </div>

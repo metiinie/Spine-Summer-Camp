@@ -62,6 +62,8 @@ export function AdminDashboardClient() {
   const [showRejectInput, setShowRejectInput] = useState(false);
   const [adminNote, setAdminNote] = useState("");
   const [noteLoading, setNoteLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchRegistrations = useCallback(async () => {
     setLoading(true);
@@ -98,9 +100,10 @@ export function AdminDashboardClient() {
   }, [statusFilter, search]);
 
   useEffect(() => {
+    setCurrentPage(1);
     const timeout = setTimeout(fetchRegistrations, 300);
     return () => clearTimeout(timeout);
-  }, [fetchRegistrations]);
+  }, [fetchRegistrations, statusFilter, search]);
 
   const handleAction = async (action: "approve" | "reject") => {
     if (!selected) return;
@@ -157,6 +160,9 @@ export function AdminDashboardClient() {
     approved: registrations.filter((r) => r.status === "APPROVED").length,
     rejected: registrations.filter((r) => r.status === "REJECTED").length,
   };
+
+  const totalPages = Math.ceil(registrations.length / itemsPerPage);
+  const paginatedRegistrations = registrations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -258,9 +264,9 @@ export function AdminDashboardClient() {
                 ) : registrations.length === 0 ? (
                   <tr><td colSpan={7} className="py-12 text-center text-slate-400 dark:text-slate-500">No registrations found.</td></tr>
                 ) : (
-                  registrations.map((reg, i) => (
+                  paginatedRegistrations.map((reg, i) => (
                     <tr key={reg.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900 cursor-pointer transition" onClick={() => setSelected(reg)}>
-                      <td className="px-4 py-3 text-slate-400 dark:text-slate-500 font-mono text-xs">{i + 1}</td>
+                      <td className="px-4 py-3 text-slate-400 dark:text-slate-500 font-mono text-xs">{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                         {reg.camper ? `${reg.camper.firstName} ${reg.camper.lastName}` : "–"}
                       </td>
@@ -296,7 +302,7 @@ export function AdminDashboardClient() {
               <div className="py-12 text-center text-slate-400 dark:text-slate-500">No registrations found.</div>
             ) : (
               <div className="space-y-4">
-                {registrations.map((reg) => (
+                {paginatedRegistrations.map((reg) => (
                   <RegistrationCard
                     key={reg.id}
                     registration={reg}
@@ -306,6 +312,31 @@ export function AdminDashboardClient() {
               </div>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {!loading && registrations.length > 0 && (
+            <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <span className="text-sm text-slate-500 dark:text-slate-400">
+                Showing <span className="font-medium text-slate-900 dark:text-slate-100">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium text-slate-900 dark:text-slate-100">{Math.min(currentPage * itemsPerPage, registrations.length)}</span> of <span className="font-medium text-slate-900 dark:text-slate-100">{registrations.length}</span> results
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
