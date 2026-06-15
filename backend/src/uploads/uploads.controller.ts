@@ -1,12 +1,11 @@
 import {
   Controller, Post, UseInterceptors, UploadedFile,
-  Body, BadRequestException, UseGuards, Req,
+  Body, BadRequestException, ConflictException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'crypto';
-import { Request } from 'express';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { unlink } from 'fs/promises';
 import { PrismaService } from '../prisma.service';
 import { EmailsService } from '../emails/emails.service';
 import { AuditService } from '../common/audit/audit.service';
@@ -23,7 +22,6 @@ export class UploadsController {
     private audit: AuditService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -47,33 +45,55 @@ export class UploadsController {
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body('registrationId') registrationId: string,
-    @Req() req: Request,
+    @Body('referenceNumber') referenceNumber: string,
   ) {
-    if (!file || !registrationId) throw new BadRequestException('Missing file or registration ID');
+    if (!file || !registrationId || !referenceNumber) {
+      if (file?.path) await unlink(file.path).catch(() => undefined);
+      throw new BadRequestException('Missing file, registration ID, or reference number');
+    }
 
     const appUrl = process.env.APP_URL || 'http://localhost:4000';
     const receiptUrl = `${appUrl}/uploads/${file.filename}`;
+    const normalizedReference = referenceNumber.trim().toUpperCase();
 
-    const reg = await this.prisma.registration.update({
+    const updated = await this.prisma.registration.updateMany({
+      where: {
+        id: registrationId,
+        referenceNumber: normalizedReference,
+        status: 'PENDING_PAYMENT',
+        deletedAt: null,
+      },
+      data: { receiptUrl, status: 'UNDER_REVIEW' },
+    });
+
+    if (updated.count === 0) {
+      await unlink(file.path).catch(() => undefined);
+      throw new ConflictException('Registration not found, already has a receipt, or reference number does not match');
+    }
+
+    const reg = await this.prisma.registration.findUniqueOrThrow({
       where: { id: registrationId },
-      data: { receiptUrl, status: 'RECEIPT_UPLOADED' },
       include: { parent: true },
     });
 
-    const user = req.user as { userId: string } | undefined;
     await this.audit.log({
       action: 'RECEIPT_UPLOADED',
-      performedBy: user?.userId ?? 'system',
+      performedBy: null,
       registrationId,
     });
 
     if (reg.parent?.primaryEmail) {
-      await this.emails.sendReceiptReceived(
-        reg.parent.primaryEmail,
-        reg.parent.primaryName,
-        reg.referenceNumber,
-      );
-    }
+        await this.prisma.emailOutbox.create({
+          data: {
+            type: 'RECEIPT_RECEIVED',
+            payload: {
+              to: reg.parent.primaryEmail,
+              name: reg.parent.primaryName,
+              referenceNumber: reg.referenceNumber,
+            },
+          },
+        });
+      }
 
     return { receiptUrl };
   }

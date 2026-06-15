@@ -3,7 +3,7 @@ import { z } from "zod";
 export const camperSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  age: z.coerce.number().min(4, "Age must be at least 4").max(18, "Age must be at most 18"),
+  age: z.coerce.number().min(4, "Age must be at least 4").max(16, "Age must be at most 16"),
   gender: z.enum(["MALE", "FEMALE"], { message: "Gender is required" }),
   gradeLevel: z.string().min(1, "Grade level is required"),
   schoolName: z.string().min(2, "School name is required"),

@@ -1,25 +1,63 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
-import { EmailsService } from '../emails/emails.service';
-import { AuditService } from '../common/audit/audit.service';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  Gender,
+  Prisma,
+  RegistrationStatus,
+  SessionType,
+  TShirtSize,
+} from '@prisma/client';
 import { customAlphabet } from 'nanoid';
+import { AuditService } from '../common/audit/audit.service';
+import { PrismaService } from '../prisma.service';
+import { AdminActionDto, AdminNoteDto } from './dto/admin-action.dto';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
-import { AdminActionDto, AdminNoteDto } from './dto/admin-action.dto';
 
-const VALID_TRANSITIONS: Record<string, string[]> = {
-  PENDING_PAYMENT: ['RECEIPT_UPLOADED'],
-  RECEIPT_UPLOADED: ['UNDER_REVIEW', 'PENDING_PAYMENT'],
-  UNDER_REVIEW: ['APPROVED', 'REJECTED'],
+const VALID_TRANSITIONS: Record<RegistrationStatus, RegistrationStatus[]> = {
+  PENDING_PAYMENT: [RegistrationStatus.UNDER_REVIEW],
+  RECEIPT_UPLOADED: [
+    RegistrationStatus.UNDER_REVIEW,
+    RegistrationStatus.APPROVED,
+    RegistrationStatus.REJECTED,
+  ],
+  UNDER_REVIEW: [RegistrationStatus.APPROVED, RegistrationStatus.REJECTED],
   APPROVED: [],
   REJECTED: [],
 };
+
+const REFERENCE_NUMBER_LENGTH = 8;
+const MAX_REFERENCE_ATTEMPTS = 5;
+const generateReferenceSuffix = customAlphabet(
+  '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  REFERENCE_NUMBER_LENGTH,
+);
+
+type EmailOutboxClient = Pick<Prisma.TransactionClient, 'emailOutbox'>;
+
+function isPrismaError(error: unknown, code: string) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code?: string }).code === code
+  );
+}
+
+function escapeCsvCell(value: unknown) {
+  const text = String(value ?? '');
+  const safeText = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
+  return `"${safeText.replace(/"/g, '""')}"`;
+}
 
 @Injectable()
 export class RegistrationsService {
   constructor(
     private prisma: PrismaService,
-    private emails: EmailsService,
     private audit: AuditService,
   ) {}
 
@@ -27,114 +65,427 @@ export class RegistrationsService {
     const { camper, parent, session, medical, waiver, idempotencyKey } = body;
 
     if (idempotencyKey) {
-      const existing = await this.prisma.registration.findUnique({ where: { idempotencyKey } });
-      if (existing) return { id: existing.id, referenceNumber: existing.referenceNumber };
+      const existing = await this.prisma.registration.findUnique({
+        where: { idempotencyKey },
+      });
+      if (existing) {
+        return {
+          id: existing.id,
+          referenceNumber: existing.referenceNumber,
+        };
+      }
     }
 
-    const amount = session.session === 'HALF_DAY' ? 26000 : 40000;
-    const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 5);
-    const referenceNumber = `SCAMP-2026-${nanoid()}`;
-    const registration = await this.prisma.$transaction(async (tx) => {
-      return tx.registration.create({
-        data: {
-          referenceNumber, status: 'PENDING_PAYMENT' as any, session: session.session as any, amount,
-          idempotencyKey,
-          camper: { create: { firstName: camper.firstName, lastName: camper.lastName, age: camper.age,
-            gender: camper.gender as any, gradeLevel: camper.gradeLevel,
-            schoolName: camper.schoolName, tShirtSize: camper.tShirtSize as any }},
-          parent: { create: { primaryName: parent.primaryName, primaryRelationship: parent.primaryRelationship,
-            primaryPhone: parent.primaryPhone, primaryEmail: parent.primaryEmail,
-            secondaryName: parent.secondaryName ?? null, secondaryPhone: parent.secondaryPhone ?? null,
-            secondaryRelationship: parent.secondaryRelationship ?? null,
-            subCity: parent.subCity, district: parent.district, houseNumber: parent.houseNumber ?? null }},
-          medicalInfo: { create: { allergies: medical?.allergies ?? null, conditions: medical?.conditions ?? null, dietary: medical?.dietary ?? null }},
-          ...(waiver && { waiver: { create: { liabilityRelease: waiver.liabilityRelease, mediaRelease: waiver.mediaRelease,
-            parentSignature: waiver.parentSignature, dateSigned: waiver.dateSigned ? new Date(waiver.dateSigned) : new Date() }}}),
-        },
-        include: { parent: true },
-      });
-    });
-    if (registration.parent?.primaryEmail) {
-      await this.emails.sendRegistrationReceived(registration.parent.primaryEmail, registration.parent.primaryName,
-        `${camper.firstName} ${camper.lastName}`, referenceNumber, session.session);
+    for (let attempt = 0; attempt < MAX_REFERENCE_ATTEMPTS; attempt += 1) {
+      const referenceNumber = `SCAMP-2026-${generateReferenceSuffix()}`;
+
+      try {
+        const registration = await this.prisma.$transaction(async (tx) => {
+          const created = await tx.registration.create({
+            data: {
+              referenceNumber,
+              status: RegistrationStatus.PENDING_PAYMENT,
+              session: session.session as SessionType,
+              amount: session.session === 'HALF_DAY' ? 26000 : 40000,
+              idempotencyKey,
+              camper: {
+                create: {
+                  firstName: camper.firstName,
+                  lastName: camper.lastName,
+                  age: camper.age,
+                  gender: camper.gender as Gender,
+                  gradeLevel: camper.gradeLevel,
+                  schoolName: camper.schoolName,
+                  tShirtSize: camper.tShirtSize as TShirtSize,
+                  height: camper.height ?? null,
+                  weight: camper.weight ?? null,
+                },
+              },
+              parent: {
+                create: {
+                  primaryName: parent.primaryName,
+                  primaryRelationship: parent.primaryRelationship,
+                  primaryPhone: parent.primaryPhone,
+                  primaryEmail: parent.primaryEmail,
+                  secondaryName: parent.secondaryName ?? null,
+                  secondaryPhone: parent.secondaryPhone ?? null,
+                  secondaryRelationship: parent.secondaryRelationship ?? null,
+                  subCity: parent.subCity,
+                  district: parent.district,
+                  houseNumber: parent.houseNumber ?? null,
+                },
+              },
+              medicalInfo: {
+                create: {
+                  allergies: medical?.allergies ?? null,
+                  conditions: medical?.conditions ?? null,
+                  dietary: medical?.dietary ?? null,
+                },
+              },
+              waiver: {
+                create: {
+                  liabilityRelease: waiver.liabilityRelease,
+                  mediaRelease: waiver.mediaRelease,
+                  parentSignature: waiver.parentSignature,
+                  dateSigned: waiver.dateSigned
+                    ? new Date(waiver.dateSigned)
+                    : new Date(),
+                },
+              },
+            },
+            include: { parent: true },
+          });
+
+          await this.enqueueEmail(tx, {
+            type: 'REGISTRATION_RECEIVED',
+            uniqueKey: `registration-received:${created.id}`,
+            payload: {
+              to: created.parent?.primaryEmail,
+              name: created.parent?.primaryName,
+              camperName: `${camper.firstName} ${camper.lastName}`,
+              referenceNumber,
+              session: session.session,
+            },
+          });
+
+          return created;
+        });
+
+        return {
+          id: registration.id,
+          referenceNumber: registration.referenceNumber,
+        };
+      } catch (error) {
+        if (isPrismaError(error, 'P2002')) {
+          if (idempotencyKey) {
+            const existing = await this.prisma.registration.findUnique({
+              where: { idempotencyKey },
+            });
+            if (existing) {
+              return {
+                id: existing.id,
+                referenceNumber: existing.referenceNumber,
+              };
+            }
+          }
+          continue;
+        }
+        throw error;
+      }
     }
-    return { id: registration.id, referenceNumber };
+
+    throw new ConflictException('Could not create registration. Please retry.');
   }
 
   async findOne(id: string) {
-    const reg = await this.prisma.registration.findFirst({ where: { id, deletedAt: null }, include: { camper: true, parent: true, medicalInfo: true, waiver: true } });
+    const reg = await this.prisma.registration.findFirst({
+      where: { id, deletedAt: null },
+      include: {
+        camper: true,
+        parent: true,
+        medicalInfo: true,
+        waiver: true,
+      },
+    });
     if (!reg) throw new NotFoundException('Registration not found');
     return reg;
   }
 
+  async findPaymentInfo(id: string) {
+    const reg = await this.prisma.registration.findFirst({
+      where: { id, deletedAt: null },
+      select: {
+        id: true,
+        referenceNumber: true,
+        amount: true,
+        session: true,
+        status: true,
+        receiptUrl: true,
+        camper: { select: { firstName: true, lastName: true } },
+      },
+    });
+    if (!reg) throw new NotFoundException('Registration not found');
+    return { ...reg, amount: reg.amount.toString() };
+  }
+
   async checkStatus(q: string) {
-    if (!q || q.trim().length === 0) throw new BadRequestException('Query parameter required');
-    const isRef = q.toUpperCase().startsWith('SCAMP-');
+    const query = q?.trim();
+    if (!query) throw new BadRequestException('Query parameter required');
+    if (query.length > 255) throw new BadRequestException('Query is too long');
+
+    const isRef = query.toUpperCase().startsWith('SCAMP-');
     const registration = await this.prisma.registration.findFirst({
-      where: isRef ? { referenceNumber: q.toUpperCase(), deletedAt: null } : { parent: { primaryEmail: { equals: q.toLowerCase() } }, deletedAt: null },
+      where: isRef
+        ? { referenceNumber: query.toUpperCase(), deletedAt: null }
+        : {
+            parent: { primaryEmail: { equals: query.toLowerCase() } },
+            deletedAt: null,
+          },
       include: { camper: true },
+      orderBy: { createdAt: 'desc' },
     });
     if (!registration) throw new NotFoundException('Registration not found');
-    return { referenceNumber: registration.referenceNumber, status: registration.status, session: registration.session,
-      amount: registration.amount.toString(), createdAt: registration.createdAt.toISOString(),
+    return {
+      referenceNumber: registration.referenceNumber,
+      status: registration.status,
+      session: registration.session,
+      amount: registration.amount.toString(),
+      createdAt: registration.createdAt.toISOString(),
       rejectionReason: registration.rejectionReason,
-      camper: registration.camper ? { firstName: registration.camper.firstName, lastName: registration.camper.lastName } : null };
+      camper: registration.camper
+        ? {
+            firstName: registration.camper.firstName,
+            lastName: registration.camper.lastName,
+          }
+        : null,
+    };
   }
 
   async findAll(query: FindAllQueryDto) {
     const { status, search, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
-    const where: any = { deletedAt: null };
-    if (status && status !== 'all') where.status = status.toUpperCase();
+    const where: Prisma.RegistrationWhereInput = { deletedAt: null };
+
+    if (status && status !== 'all') {
+      where.status = status as RegistrationStatus;
+    }
+
     if (search) {
       where.OR = [
         { camper: { firstName: { contains: search, mode: 'insensitive' } } },
         { camper: { lastName: { contains: search, mode: 'insensitive' } } },
         { parent: { primaryName: { contains: search, mode: 'insensitive' } } },
-        { referenceNumber: { contains: search } },
+        { referenceNumber: { contains: search.toUpperCase() } },
       ];
     }
+
     const [total, data] = await this.prisma.$transaction([
       this.prisma.registration.count({ where }),
-      this.prisma.registration.findMany({ where, include: { camper: true, parent: true, medicalInfo: true, waiver: true }, orderBy: { createdAt: 'desc' }, skip, take: limit }),
+      this.prisma.registration.findMany({
+        where,
+        include: {
+          camper: true,
+          parent: true,
+          medicalInfo: true,
+          waiver: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
     ]);
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async approveOrReject(dto: AdminActionDto, performedBy: string) {
-    const existing = await this.prisma.registration.findUnique({ where: { id: dto.registrationId } });
-    if (!existing) throw new NotFoundException('Registration not found');
-    const newStatus = dto.action === 'approve' ? 'APPROVED' : 'REJECTED';
-    const allowed = VALID_TRANSITIONS[existing.status] ?? [];
-    if (!allowed.includes(newStatus)) throw new BadRequestException(`Cannot transition from ${existing.status} to ${newStatus}`);
-    const reg = await this.prisma.registration.update({
-      where: { id: dto.registrationId },
-      data: { status: newStatus as any, ...(dto.action === 'reject' && { rejectionReason: dto.rejectionReason || 'No reason provided' }) },
-      include: { parent: true, camper: true },
+    const existing = await this.prisma.registration.findFirst({
+      where: { id: dto.registrationId, deletedAt: null },
     });
-    await this.audit.log({ action: dto.action === 'approve' ? 'REGISTRATION_APPROVED' : 'REGISTRATION_REJECTED',
-      performedBy, registrationId: dto.registrationId, details: dto.action === 'reject' ? { reason: dto.rejectionReason } : undefined });
-    if (reg.parent?.primaryEmail && reg.camper) {
-      const n = `${reg.camper.firstName} ${reg.camper.lastName}`;
-      if (dto.action === 'approve') await this.emails.sendApproved(reg.parent.primaryEmail, reg.parent.primaryName, n, reg.referenceNumber);
-      else await this.emails.sendRejected(reg.parent.primaryEmail, reg.parent.primaryName, n, reg.referenceNumber, dto.rejectionReason);
+    if (!existing) throw new NotFoundException('Registration not found');
+
+    const newStatus =
+      dto.action === 'approve'
+        ? RegistrationStatus.APPROVED
+        : RegistrationStatus.REJECTED;
+    const allowed = VALID_TRANSITIONS[existing.status] ?? [];
+
+    if (!allowed.includes(newStatus)) {
+      throw new BadRequestException(
+        `Cannot transition from ${existing.status} to ${newStatus}`,
+      );
     }
-    return { success: true, status: newStatus };
+
+    const reg = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.registration.updateMany({
+        where: {
+          id: dto.registrationId,
+          status: existing.status,
+          deletedAt: null,
+        },
+        data: {
+          status: newStatus,
+          rejectionReason:
+            dto.action === 'reject' ? dto.rejectionReason : null,
+        },
+      });
+
+      if (updated.count === 0) {
+        throw new ConflictException(
+          'Concurrent update - registration status changed',
+        );
+      }
+
+      const updatedRegistration = await tx.registration.findUniqueOrThrow({
+        where: { id: dto.registrationId },
+        include: { parent: true, camper: true },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          action:
+            dto.action === 'approve'
+              ? 'REGISTRATION_APPROVED'
+              : 'REGISTRATION_REJECTED',
+          performedBy,
+          registrationId: dto.registrationId,
+          details:
+            dto.action === 'reject'
+              ? { reason: dto.rejectionReason }
+              : undefined,
+        },
+      });
+
+      if (updatedRegistration.parent?.primaryEmail && updatedRegistration.camper) {
+        const camperName = `${updatedRegistration.camper.firstName} ${updatedRegistration.camper.lastName}`;
+        await this.enqueueEmail(tx, {
+          type: dto.action === 'approve' ? 'APPROVED' : 'REJECTED',
+          uniqueKey: `${dto.action}:${updatedRegistration.id}:${newStatus}`,
+          payload: {
+            to: updatedRegistration.parent.primaryEmail,
+            name: updatedRegistration.parent.primaryName,
+            camperName,
+            referenceNumber: updatedRegistration.referenceNumber,
+            reason: dto.rejectionReason,
+          },
+        });
+      }
+
+      return updatedRegistration;
+    });
+
+    return { success: true, status: reg.status };
   }
 
   async saveNote(dto: AdminNoteDto, performedBy: string) {
-    const existing = await this.prisma.registration.findUnique({ where: { id: dto.registrationId } });
-    if (!existing) throw new NotFoundException('Registration not found');
-    await this.prisma.registration.update({ where: { id: dto.registrationId }, data: { adminNote: dto.adminNote } });
-    await this.audit.log({ action: 'ADMIN_NOTE_SAVED', performedBy, registrationId: dto.registrationId });
+    const updated = await this.prisma.registration.updateMany({
+      where: { id: dto.registrationId, deletedAt: null },
+      data: { adminNote: dto.adminNote },
+    });
+
+    if (updated.count === 0) {
+      throw new NotFoundException('Registration not found');
+    }
+
+    await this.audit.log({
+      action: 'ADMIN_NOTE_SAVED',
+      performedBy,
+      registrationId: dto.registrationId,
+    });
+
     return { success: true };
   }
 
   async generateCsvData(performedBy: string) {
-    const regs = await this.prisma.registration.findMany({ where: { deletedAt: null }, include: { camper: true, parent: true, medicalInfo: true, waiver: true }, orderBy: { createdAt: 'desc' } });
+    const header = [
+      'Reference',
+      'Status',
+      'Session',
+      'Amount',
+      'Camper First Name',
+      'Camper Last Name',
+      'Age',
+      'Gender',
+      'Grade',
+      'School',
+      'T-Shirt',
+      'Parent Name',
+      'Relationship',
+      'Phone',
+      'Email',
+      'Sub-City',
+      'District',
+      'House No.',
+      'Allergies',
+      'Conditions',
+      'Dietary',
+      'Liability Release',
+      'Media Release',
+      'Parent Signature',
+      'Submitted At',
+    ];
+    const rows: string[] = [header.map(escapeCsvCell).join(',')];
+    let cursor: string | undefined;
+
+    for (;;) {
+      const regs = await this.prisma.registration.findMany({
+        where: { deletedAt: null },
+        include: {
+          camper: true,
+          parent: true,
+          medicalInfo: true,
+          waiver: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 500,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+      });
+
+      if (regs.length === 0) break;
+
+      rows.push(
+        ...regs.map((registration) =>
+          [
+            registration.referenceNumber,
+            registration.status,
+            registration.session,
+            registration.amount.toString(),
+            registration.camper?.firstName,
+            registration.camper?.lastName,
+            registration.camper?.age,
+            registration.camper?.gender,
+            registration.camper?.gradeLevel,
+            registration.camper?.schoolName,
+            registration.camper?.tShirtSize,
+            registration.parent?.primaryName,
+            registration.parent?.primaryRelationship,
+            registration.parent?.primaryPhone,
+            registration.parent?.primaryEmail,
+            registration.parent?.subCity,
+            registration.parent?.district,
+            registration.parent?.houseNumber,
+            registration.medicalInfo?.allergies,
+            registration.medicalInfo?.conditions,
+            registration.medicalInfo?.dietary,
+            registration.waiver?.liabilityRelease ? 'Yes' : 'No',
+            registration.waiver?.mediaRelease ? 'Yes' : 'No',
+            registration.waiver?.parentSignature,
+            registration.createdAt.toISOString(),
+          ]
+            .map(escapeCsvCell)
+            .join(','),
+        ),
+      );
+
+      cursor = regs[regs.length - 1]?.id;
+    }
+
     await this.audit.log({ action: 'CSV_EXPORTED', performedBy });
-    const h = ['Reference','Status','Session','Amount','Camper First Name','Camper Last Name','Age','Gender','Grade','School','T-Shirt','Parent Name','Relationship','Phone','Email','Sub-City','District','House No.','Allergies','Conditions','Dietary','Liability Release','Media Release','Parent Signature','Submitted At'];
-    const rows = regs.map((r) => [r.referenceNumber,r.status,r.session,r.amount.toString(),r.camper?.firstName??'',r.camper?.lastName??'',r.camper?.age?.toString()??'',r.camper?.gender??'',r.camper?.gradeLevel??'',r.camper?.schoolName??'',r.camper?.tShirtSize??'',r.parent?.primaryName??'',r.parent?.primaryRelationship??'',r.parent?.primaryPhone??'',r.parent?.primaryEmail??'',r.parent?.subCity??'',r.parent?.district??'',r.parent?.houseNumber??'',r.medicalInfo?.allergies??'',r.medicalInfo?.conditions??'',r.medicalInfo?.dietary??'',r.waiver?.liabilityRelease?'Yes':'No',r.waiver?.mediaRelease?'Yes':'No',r.waiver?.parentSignature??'',r.createdAt.toISOString()]);
-    return [h,...rows].map((row)=>row.map((cell)=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+    return rows.join('\n');
+  }
+
+  private async enqueueEmail(
+    db: EmailOutboxClient,
+    params: { type: string; uniqueKey: string; payload: Record<string, unknown> },
+  ) {
+    if (!params.payload.to) return;
+
+    await db.emailOutbox.upsert({
+      where: { uniqueKey: params.uniqueKey },
+      create: {
+        type: params.type,
+        uniqueKey: params.uniqueKey,
+        payload: params.payload,
+      },
+      update: {},
+    });
   }
 }

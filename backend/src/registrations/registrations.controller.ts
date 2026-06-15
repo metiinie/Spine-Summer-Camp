@@ -27,6 +27,13 @@ export class RegistrationsController {
     return this.regService.checkStatus(query);
   }
 
+  // Public: limited payment details for the post-registration payment page
+  @Throttle({ default: { ttl: 60000, limit: 30 } })
+  @Get('registrations/payment/:id')
+  getPaymentRegistration(@Param('id') id: string) {
+    return this.regService.findPaymentInfo(id);
+  }
+
   // Auth required: full registration detail
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'STAFF')

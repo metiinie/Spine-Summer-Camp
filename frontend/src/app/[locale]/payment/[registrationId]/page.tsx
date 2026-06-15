@@ -7,7 +7,7 @@ interface PaymentPageProps {
 
 export default async function PaymentPage({ params: { registrationId } }: PaymentPageProps) {
   const backendUrl = process.env.BACKEND_URL || "http://localhost:4000";
-  const res = await fetch(`${backendUrl}/registrations/${registrationId}`, {
+  const res = await fetch(`${backendUrl}/registrations/payment/${registrationId}`, {
     cache: 'no-store'
   });
   

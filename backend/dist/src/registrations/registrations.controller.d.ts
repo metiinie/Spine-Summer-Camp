@@ -1,0 +1,169 @@
+import { Request, Response } from 'express';
+import { RegistrationsService } from './registrations.service';
+import { CreateRegistrationDto } from './dto/create-registration.dto';
+import { FindAllQueryDto } from './dto/find-all-query.dto';
+import { AdminActionDto, AdminNoteDto } from './dto/admin-action.dto';
+export declare class RegistrationsController {
+    private readonly regService;
+    constructor(regService: RegistrationsService);
+    createRegistration(body: CreateRegistrationDto): Promise<{
+        id: string;
+        referenceNumber: string;
+    }>;
+    checkStatus(query: string): Promise<{
+        referenceNumber: string;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
+        session: import(".prisma/client").$Enums.SessionType;
+        amount: string;
+        createdAt: string;
+        rejectionReason: string | null;
+        camper: {
+            firstName: string;
+            lastName: string;
+        } | null;
+    }>;
+    getPaymentRegistration(id: string): Promise<{
+        amount: string;
+        id: string;
+        referenceNumber: string;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
+        session: import(".prisma/client").$Enums.SessionType;
+        receiptUrl: string | null;
+        camper: {
+            firstName: string;
+            lastName: string;
+        } | null;
+    }>;
+    getRegistration(id: string): Promise<{
+        camper: {
+            id: string;
+            firstName: string;
+            lastName: string;
+            age: number;
+            gender: import(".prisma/client").$Enums.Gender;
+            gradeLevel: string;
+            schoolName: string;
+            tShirtSize: import(".prisma/client").$Enums.TShirtSize;
+            height: number | null;
+            weight: number | null;
+            registrationId: string;
+        } | null;
+        parent: {
+            id: string;
+            primaryName: string;
+            primaryRelationship: string;
+            primaryPhone: string;
+            primaryEmail: string;
+            secondaryName: string | null;
+            secondaryPhone: string | null;
+            secondaryRelationship: string | null;
+            subCity: string;
+            district: string;
+            houseNumber: string | null;
+            registrationId: string;
+        } | null;
+        medicalInfo: {
+            id: string;
+            allergies: string | null;
+            conditions: string | null;
+            dietary: string | null;
+            registrationId: string;
+        } | null;
+        waiver: {
+            id: string;
+            liabilityRelease: boolean;
+            mediaRelease: boolean;
+            parentSignature: string;
+            dateSigned: Date;
+            registrationId: string;
+        } | null;
+    } & {
+        id: string;
+        referenceNumber: string;
+        idempotencyKey: string | null;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
+        session: import(".prisma/client").$Enums.SessionType;
+        amount: import("@prisma/client/runtime/library").Decimal;
+        receiptUrl: string | null;
+        adminNote: string | null;
+        rejectionReason: string | null;
+        campYear: number;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+    }>;
+    getRegistrations(query: FindAllQueryDto): Promise<{
+        data: ({
+            camper: {
+                id: string;
+                firstName: string;
+                lastName: string;
+                age: number;
+                gender: import(".prisma/client").$Enums.Gender;
+                gradeLevel: string;
+                schoolName: string;
+                tShirtSize: import(".prisma/client").$Enums.TShirtSize;
+                height: number | null;
+                weight: number | null;
+                registrationId: string;
+            } | null;
+            parent: {
+                id: string;
+                primaryName: string;
+                primaryRelationship: string;
+                primaryPhone: string;
+                primaryEmail: string;
+                secondaryName: string | null;
+                secondaryPhone: string | null;
+                secondaryRelationship: string | null;
+                subCity: string;
+                district: string;
+                houseNumber: string | null;
+                registrationId: string;
+            } | null;
+            medicalInfo: {
+                id: string;
+                allergies: string | null;
+                conditions: string | null;
+                dietary: string | null;
+                registrationId: string;
+            } | null;
+            waiver: {
+                id: string;
+                liabilityRelease: boolean;
+                mediaRelease: boolean;
+                parentSignature: string;
+                dateSigned: Date;
+                registrationId: string;
+            } | null;
+        } & {
+            id: string;
+            referenceNumber: string;
+            idempotencyKey: string | null;
+            status: import(".prisma/client").$Enums.RegistrationStatus;
+            session: import(".prisma/client").$Enums.SessionType;
+            amount: import("@prisma/client/runtime/library").Decimal;
+            receiptUrl: string | null;
+            adminNote: string | null;
+            rejectionReason: string | null;
+            campYear: number;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+        })[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    approveOrReject(body: AdminActionDto, req: Request): Promise<{
+        success: boolean;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
+    }>;
+    saveAdminNote(body: AdminNoteDto, req: Request): Promise<{
+        success: boolean;
+    }>;
+    exportCsv(res: Response, req: Request): Promise<void>;
+}

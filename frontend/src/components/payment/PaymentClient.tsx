@@ -46,6 +46,7 @@ export function PaymentClient({ registration }: PaymentClientProps) {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("registrationId", registration.id);
+      formData.append("referenceNumber", registration.referenceNumber);
       const res = await fetch("/api/upload-receipt", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload failed");

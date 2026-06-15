@@ -1,13 +1,16 @@
-import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsInt, Min, Max, IsIn, MaxLength } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
 export class FindAllQueryDto {
   @IsOptional()
-  @IsString()
+  @Transform(({ value }) => typeof value === 'string' && value.toLowerCase() !== 'all' ? value.toUpperCase() : value)
+  @IsIn(['all', 'PENDING_PAYMENT', 'RECEIPT_UPLOADED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED'])
   status?: string;
 
   @IsOptional()
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsString()
+  @MaxLength(100)
   search?: string;
 
   @IsOptional()

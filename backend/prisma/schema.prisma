@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = env("DATABASE_URL")
 }
 
 enum Role {
@@ -140,4 +140,24 @@ model AuditLog {
 
   @@index([registrationId])
   @@index([performedBy])
+}
+
+enum EmailStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+}
+
+model EmailOutbox {
+  id          String      @id @default(cuid())
+  type        String      // e.g. REGISTRATION_RECEIVED, APPROVED, REJECTED, RECEIPT_RECEIVED
+  payload     Json        // Stored email arguments
+  status      EmailStatus @default(PENDING)
+  error       String?
+  uniqueKey   String?     @unique // optional idempotency key
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([status])
 }
