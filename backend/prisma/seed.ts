@@ -3,34 +3,72 @@ import * as bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+/**
+ * Seed admin users from environment variables.
+ *
+ * Set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD in your .env
+ * (and optionally SEED_ADMIN_EMAIL_2 / SEED_ADMIN_PASSWORD_2 for a second admin).
+ *
+ * In production, the script refuses to run with placeholder passwords.
+ */
 async function main() {
-  const users = [
-    { email: "awol@gmail.com", password: "12345678", role: "ADMIN" },
-    { email: "awole@gmail.com", password: "12345678", role: "ADMIN" }
+  const isProduction = process.env.NODE_ENV === "production";
+
+  const admins = [
+    {
+      email: process.env.SEED_ADMIN_EMAIL || "admin@spinecamp.com",
+      password: process.env.SEED_ADMIN_PASSWORD || "changeme-dev-only",
+    },
+    ...(process.env.SEED_ADMIN_EMAIL_2
+      ? [
+          {
+            email: process.env.SEED_ADMIN_EMAIL_2,
+            password: process.env.SEED_ADMIN_PASSWORD_2 || "changeme-dev-only",
+          },
+        ]
+      : []),
   ];
 
-  for (const u of users) {
-    // Delete existing user if it exists
-    const existing = await prisma.user.findUnique({ where: { email: u.email } });
-    if (existing) {
-      await prisma.user.delete({ where: { email: u.email } });
-      console.log(`🗑️  Deleted existing user: ${existing.email}`);
+  const PLACEHOLDER_PASSWORDS = ["changeme-dev-only", "12345678", "password"];
+
+  for (const admin of admins) {
+    if (isProduction && PLACEHOLDER_PASSWORDS.includes(admin.password)) {
+      console.error(
+        `❌ Refusing to seed "${admin.email}" with a placeholder password in production.`,
+      );
+      console.error(
+        `   Set SEED_ADMIN_PASSWORD (and SEED_ADMIN_PASSWORD_2) to strong values.`,
+      );
+      process.exit(1);
     }
 
-    // Create new user with hashed password
-    const passwordHash = await bcrypt.hash(u.password, 12);
-    await prisma.user.create({
-      data: {
-        email: u.email,
+    if (admin.password.length < 8) {
+      console.error(
+        `❌ Password for "${admin.email}" must be at least 8 characters.`,
+      );
+      process.exit(1);
+    }
+
+    const passwordHash = await bcrypt.hash(admin.password, 12);
+
+    // Upsert: create if missing, update password hash if exists (non-destructive)
+    await prisma.user.upsert({
+      where: { email: admin.email },
+      update: { passwordHash, role: "ADMIN" },
+      create: {
+        email: admin.email,
         passwordHash,
-        role: u.role as any,
+        role: "ADMIN",
       },
     });
 
-    console.log(`✅ User created! Email: ${u.email}, Password: ${u.password}`);
+    console.log(`✅ Admin user ready: ${admin.email}`);
   }
 }
 
 main()
-  .catch(console.error)
+  .catch((err) => {
+    console.error("Seed failed:", err);
+    process.exit(1);
+  })
   .finally(() => prisma.$disconnect());

@@ -106,6 +106,8 @@ model Parent {
   subCity               String
   district              String
   houseNumber           String?
+
+  @@index([primaryEmail])
 }
 
 model MedicalInfo {

@@ -7,18 +7,20 @@ import { diskStorage } from 'multer';
 import { randomUUID } from 'crypto';
 import { unlink } from 'fs/promises';
 import { PrismaService } from '../prisma.service';
-import { EmailsService } from '../emails/emails.service';
 import { AuditService } from '../common/audit/audit.service';
 
 // Only allow image and PDF receipts
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
 
+// Input constraints
+const MAX_ID_LENGTH = 64;
+const ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
+
 @Controller('upload-receipt')
 export class UploadsController {
   constructor(
     private prisma: PrismaService,
-    private emails: EmailsService,
     private audit: AuditService,
   ) {}
 
@@ -44,22 +46,42 @@ export class UploadsController {
   )
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @Body('registrationId') registrationId: string,
-    @Body('referenceNumber') referenceNumber: string,
+    @Body('registrationId') rawRegistrationId: string,
+    @Body('referenceNumber') rawReferenceNumber: string,
   ) {
+    // --- Input validation ---
+    const registrationId = rawRegistrationId?.trim();
+    const referenceNumber = rawReferenceNumber?.trim().toUpperCase();
+
     if (!file || !registrationId || !referenceNumber) {
       if (file?.path) await unlink(file.path).catch(() => undefined);
       throw new BadRequestException('Missing file, registration ID, or reference number');
     }
 
+    if (
+      registrationId.length > MAX_ID_LENGTH ||
+      !ID_PATTERN.test(registrationId)
+    ) {
+      await unlink(file.path).catch(() => undefined);
+      throw new BadRequestException('Invalid registration ID format');
+    }
+
+    if (
+      referenceNumber.length > 30 ||
+      !referenceNumber.startsWith('SCAMP-')
+    ) {
+      await unlink(file.path).catch(() => undefined);
+      throw new BadRequestException('Invalid reference number format');
+    }
+
+    // --- Business logic ---
     const appUrl = process.env.APP_URL || 'http://localhost:4000';
     const receiptUrl = `${appUrl}/uploads/${file.filename}`;
-    const normalizedReference = referenceNumber.trim().toUpperCase();
 
     const updated = await this.prisma.registration.updateMany({
       where: {
         id: registrationId,
-        referenceNumber: normalizedReference,
+        referenceNumber,
         status: 'PENDING_PAYMENT',
         deletedAt: null,
       },
@@ -82,18 +104,23 @@ export class UploadsController {
       registrationId,
     });
 
+    // Idempotent email enqueue — upsert with uniqueKey prevents duplicate sends
     if (reg.parent?.primaryEmail) {
-        await this.prisma.emailOutbox.create({
-          data: {
-            type: 'RECEIPT_RECEIVED',
-            payload: {
-              to: reg.parent.primaryEmail,
-              name: reg.parent.primaryName,
-              referenceNumber: reg.referenceNumber,
-            },
+      const uniqueKey = `receipt-received:${registrationId}`;
+      await this.prisma.emailOutbox.upsert({
+        where: { uniqueKey },
+        create: {
+          type: 'RECEIPT_RECEIVED',
+          uniqueKey,
+          payload: {
+            to: reg.parent.primaryEmail,
+            name: reg.parent.primaryName,
+            referenceNumber: reg.referenceNumber,
           },
-        });
-      }
+        },
+        update: {}, // Already enqueued — no-op
+      });
+    }
 
     return { receiptUrl };
   }

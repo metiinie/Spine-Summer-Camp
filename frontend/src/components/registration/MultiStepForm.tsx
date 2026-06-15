@@ -165,10 +165,17 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to submit");
+      if (!res.ok) {
+        // Backend sends errors as 'message' (string or string[])
+        const errMsg = Array.isArray(data.message)
+          ? data.message.join(", ")
+          : data.message || data.error || "Failed to submit registration";
+        throw new Error(errMsg);
+      }
       localStorage.removeItem(STORAGE_KEY);
       router.push(`/payment/${data.id}`);
     } catch (err: unknown) {
+      console.error("Registration submit error:", err);
       alert(err instanceof Error ? err.message : "An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

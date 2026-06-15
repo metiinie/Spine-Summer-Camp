@@ -13,9 +13,6 @@ let PrismaService = class PrismaService extends client_1.PrismaClient {
     async onModuleInit() {
         await this.$connect();
     }
-    async resetMigrations() {
-        await this.$executeRawUnsafe('DROP TABLE IF EXISTS "_prisma_migrations" CASCADE;');
-    }
 };
 exports.PrismaService = PrismaService;
 exports.PrismaService = PrismaService = __decorate([

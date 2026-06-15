@@ -149,6 +149,9 @@ export class RegistrationsService {
           });
 
           return created;
+        }, {
+          maxWait: 5000,
+          timeout: 15000,
         });
 
         return {
@@ -483,7 +486,7 @@ export class RegistrationsService {
       create: {
         type: params.type,
         uniqueKey: params.uniqueKey,
-        payload: params.payload,
+        payload: params.payload as Prisma.InputJsonValue,
       },
       update: {},
     });

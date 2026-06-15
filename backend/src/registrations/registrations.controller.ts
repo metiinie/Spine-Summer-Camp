@@ -50,18 +50,18 @@ export class RegistrationsController {
     return this.regService.findAll(query);
   }
 
-  // Admin: approve or reject with audit trail
+  // Admin only: approve or reject with audit trail
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'STAFF')
+  @Roles('ADMIN')
   @Post('admin/action')
   approveOrReject(@Body() body: AdminActionDto, @Req() req: Request) {
     const user = req.user as { userId: string };
     return this.regService.approveOrReject(body, user.userId);
   }
 
-  // Admin: save internal note with audit trail
+  // Admin only: save internal note with audit trail
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'STAFF')
+  @Roles('ADMIN')
   @Post('admin/note')
   saveAdminNote(@Body() body: AdminNoteDto, @Req() req: Request) {
     const user = req.user as { userId: string };

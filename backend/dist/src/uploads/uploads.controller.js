@@ -19,32 +19,42 @@ const multer_1 = require("multer");
 const crypto_1 = require("crypto");
 const promises_1 = require("fs/promises");
 const prisma_service_1 = require("../prisma.service");
-const emails_service_1 = require("../emails/emails.service");
 const audit_service_1 = require("../common/audit/audit.service");
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
+const MAX_ID_LENGTH = 64;
+const ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
 let UploadsController = class UploadsController {
     prisma;
-    emails;
     audit;
-    constructor(prisma, emails, audit) {
+    constructor(prisma, audit) {
         this.prisma = prisma;
-        this.emails = emails;
         this.audit = audit;
     }
-    async uploadFile(file, registrationId, referenceNumber) {
+    async uploadFile(file, rawRegistrationId, rawReferenceNumber) {
+        const registrationId = rawRegistrationId?.trim();
+        const referenceNumber = rawReferenceNumber?.trim().toUpperCase();
         if (!file || !registrationId || !referenceNumber) {
             if (file?.path)
                 await (0, promises_1.unlink)(file.path).catch(() => undefined);
             throw new common_1.BadRequestException('Missing file, registration ID, or reference number');
         }
+        if (registrationId.length > MAX_ID_LENGTH ||
+            !ID_PATTERN.test(registrationId)) {
+            await (0, promises_1.unlink)(file.path).catch(() => undefined);
+            throw new common_1.BadRequestException('Invalid registration ID format');
+        }
+        if (referenceNumber.length > 30 ||
+            !referenceNumber.startsWith('SCAMP-')) {
+            await (0, promises_1.unlink)(file.path).catch(() => undefined);
+            throw new common_1.BadRequestException('Invalid reference number format');
+        }
         const appUrl = process.env.APP_URL || 'http://localhost:4000';
         const receiptUrl = `${appUrl}/uploads/${file.filename}`;
-        const normalizedReference = referenceNumber.trim().toUpperCase();
         const updated = await this.prisma.registration.updateMany({
             where: {
                 id: registrationId,
-                referenceNumber: normalizedReference,
+                referenceNumber,
                 status: 'PENDING_PAYMENT',
                 deletedAt: null,
             },
@@ -64,15 +74,19 @@ let UploadsController = class UploadsController {
             registrationId,
         });
         if (reg.parent?.primaryEmail) {
-            await this.prisma.emailOutbox.create({
-                data: {
+            const uniqueKey = `receipt-received:${registrationId}`;
+            await this.prisma.emailOutbox.upsert({
+                where: { uniqueKey },
+                create: {
                     type: 'RECEIPT_RECEIVED',
+                    uniqueKey,
                     payload: {
                         to: reg.parent.primaryEmail,
                         name: reg.parent.primaryName,
                         referenceNumber: reg.referenceNumber,
                     },
                 },
+                update: {},
             });
         }
         return { receiptUrl };
@@ -107,7 +121,6 @@ __decorate([
 exports.UploadsController = UploadsController = __decorate([
     (0, common_1.Controller)('upload-receipt'),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        emails_service_1.EmailsService,
         audit_service_1.AuditService])
 ], UploadsController);
 //# sourceMappingURL=uploads.controller.js.map

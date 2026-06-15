@@ -24,7 +24,10 @@ let AllExceptionsFilter = AllExceptionsFilter_1 = class AllExceptionsFilter {
                 ? res.message
                 : exception.message;
         }
-        else {
+        else if (this.isPrismaKnownError(exception)) {
+            const prismaResult = this.handlePrismaError(exception);
+            status = prismaResult.status;
+            message = prismaResult.message;
             this.logger.error(`Unhandled exception on ${request.method} ${request.url}`, exception instanceof Error ? exception.stack : String(exception));
         }
         response.status(status).json({
@@ -33,6 +36,43 @@ let AllExceptionsFilter = AllExceptionsFilter_1 = class AllExceptionsFilter {
             path: request.url,
             timestamp: new Date().toISOString(),
         });
+    }
+    isPrismaKnownError(error) {
+        if (typeof error !== 'object' || error === null)
+            return false;
+        const err = error;
+        return (typeof err.code === 'string' &&
+            err.code.startsWith('P') &&
+            err.constructor?.name === 'PrismaClientKnownRequestError');
+    }
+    handlePrismaError(error) {
+        switch (error.code) {
+            case 'P2002': {
+                const target = Array.isArray(error.meta?.target)
+                    ? error.meta.target.join(', ')
+                    : 'field';
+                return {
+                    status: common_1.HttpStatus.CONFLICT,
+                    message: `A record with this ${target} already exists`,
+                };
+            }
+            case 'P2025':
+                return {
+                    status: common_1.HttpStatus.NOT_FOUND,
+                    message: 'Record not found',
+                };
+            case 'P2003':
+                return {
+                    status: common_1.HttpStatus.BAD_REQUEST,
+                    message: 'Related record not found',
+                };
+            default:
+                this.logger.error(`Unhandled Prisma error code ${error.code}`, error);
+                return {
+                    status: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+                    message: 'Internal server error',
+                };
+        }
     }
 };
 exports.AllExceptionsFilter = AllExceptionsFilter;

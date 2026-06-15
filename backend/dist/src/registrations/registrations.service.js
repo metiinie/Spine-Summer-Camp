@@ -130,6 +130,9 @@ let RegistrationsService = class RegistrationsService {
                         },
                     });
                     return created;
+                }, {
+                    maxWait: 5000,
+                    timeout: 15000,
                 });
                 return {
                     id: registration.id,
