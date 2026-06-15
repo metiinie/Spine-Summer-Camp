@@ -10,12 +10,12 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Serve uploaded receipt files statically at /uploads/*
-  app.useStaticAssets(join(__dirname, '..', 'public', 'uploads'), {
+  app.useStaticAssets(join(process.cwd(), 'public', 'uploads'), {
     prefix: '/uploads',
   });
 
-  // Security headers
-  app.use(helmet());
+  // Security headers - allow cross-origin images
+  app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
   // CORS — only allow known origins
   app.enableCors({

@@ -15,6 +15,7 @@ export declare class RegistrationsService {
     findOne(id: string): Promise<{
         camper: {
             id: string;
+            registrationId: string;
             firstName: string;
             lastName: string;
             age: number;
@@ -24,10 +25,10 @@ export declare class RegistrationsService {
             tShirtSize: import(".prisma/client").$Enums.TShirtSize;
             height: number | null;
             weight: number | null;
-            registrationId: string;
         } | null;
         parent: {
             id: string;
+            registrationId: string;
             primaryName: string;
             primaryRelationship: string;
             primaryPhone: string;
@@ -38,49 +39,48 @@ export declare class RegistrationsService {
             subCity: string;
             district: string;
             houseNumber: string | null;
-            registrationId: string;
         } | null;
         medicalInfo: {
             id: string;
+            registrationId: string;
             allergies: string | null;
             conditions: string | null;
             dietary: string | null;
-            registrationId: string;
         } | null;
         waiver: {
             id: string;
+            registrationId: string;
             liabilityRelease: boolean;
             mediaRelease: boolean;
             parentSignature: string;
             dateSigned: Date;
-            registrationId: string;
         } | null;
     } & {
         id: string;
-        referenceNumber: string;
-        idempotencyKey: string | null;
-        status: import(".prisma/client").$Enums.RegistrationStatus;
-        session: import(".prisma/client").$Enums.SessionType;
-        amount: Prisma.Decimal;
-        receiptUrl: string | null;
-        adminNote: string | null;
-        rejectionReason: string | null;
-        campYear: number;
         createdAt: Date;
         updatedAt: Date;
+        rejectionReason: string | null;
+        adminNote: string | null;
+        session: import(".prisma/client").$Enums.SessionType;
+        idempotencyKey: string | null;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
+        referenceNumber: string;
+        amount: Prisma.Decimal;
+        receiptUrl: string | null;
+        campYear: number;
         deletedAt: Date | null;
     }>;
     findPaymentInfo(id: string): Promise<{
         amount: string;
-        id: string;
-        referenceNumber: string;
-        status: import(".prisma/client").$Enums.RegistrationStatus;
-        session: import(".prisma/client").$Enums.SessionType;
-        receiptUrl: string | null;
         camper: {
             firstName: string;
             lastName: string;
         } | null;
+        id: string;
+        session: import(".prisma/client").$Enums.SessionType;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
+        referenceNumber: string;
+        receiptUrl: string | null;
     }>;
     checkStatus(q: string): Promise<{
         referenceNumber: string;
@@ -98,6 +98,7 @@ export declare class RegistrationsService {
         data: ({
             camper: {
                 id: string;
+                registrationId: string;
                 firstName: string;
                 lastName: string;
                 age: number;
@@ -107,10 +108,10 @@ export declare class RegistrationsService {
                 tShirtSize: import(".prisma/client").$Enums.TShirtSize;
                 height: number | null;
                 weight: number | null;
-                registrationId: string;
             } | null;
             parent: {
                 id: string;
+                registrationId: string;
                 primaryName: string;
                 primaryRelationship: string;
                 primaryPhone: string;
@@ -121,36 +122,35 @@ export declare class RegistrationsService {
                 subCity: string;
                 district: string;
                 houseNumber: string | null;
-                registrationId: string;
             } | null;
             medicalInfo: {
                 id: string;
+                registrationId: string;
                 allergies: string | null;
                 conditions: string | null;
                 dietary: string | null;
-                registrationId: string;
             } | null;
             waiver: {
                 id: string;
+                registrationId: string;
                 liabilityRelease: boolean;
                 mediaRelease: boolean;
                 parentSignature: string;
                 dateSigned: Date;
-                registrationId: string;
             } | null;
         } & {
             id: string;
-            referenceNumber: string;
-            idempotencyKey: string | null;
-            status: import(".prisma/client").$Enums.RegistrationStatus;
-            session: import(".prisma/client").$Enums.SessionType;
-            amount: Prisma.Decimal;
-            receiptUrl: string | null;
-            adminNote: string | null;
-            rejectionReason: string | null;
-            campYear: number;
             createdAt: Date;
             updatedAt: Date;
+            rejectionReason: string | null;
+            adminNote: string | null;
+            session: import(".prisma/client").$Enums.SessionType;
+            idempotencyKey: string | null;
+            status: import(".prisma/client").$Enums.RegistrationStatus;
+            referenceNumber: string;
+            amount: Prisma.Decimal;
+            receiptUrl: string | null;
+            campYear: number;
             deletedAt: Date | null;
         })[];
         meta: {

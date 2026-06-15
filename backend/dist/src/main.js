@@ -11,10 +11,10 @@ const http_exception_filter_1 = require("./common/filters/http-exception.filter"
 const path_1 = require("path");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public', 'uploads'), {
+    app.useStaticAssets((0, path_1.join)(process.cwd(), 'public', 'uploads'), {
         prefix: '/uploads',
     });
-    app.use((0, helmet_1.default)());
+    app.use((0, helmet_1.default)({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
     app.enableCors({
         origin: [
             'http://localhost:3000',
