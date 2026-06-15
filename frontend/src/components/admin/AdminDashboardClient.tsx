@@ -175,14 +175,14 @@ export function AdminDashboardClient() {
           <div className="flex items-center gap-3">
             <a
               href="/api/admin/export"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
             >
               <Download className="w-4 h-4" />
               <span className="hidden sm:inline">Export CSV</span>
             </a>
             <button
               onClick={() => signOut({ callbackUrl: "/admin/login" })}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
@@ -222,7 +222,7 @@ export function AdminDashboardClient() {
                 placeholder="Search by name or reference..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition"
+                className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-100 dark:focus:ring-sky-900 outline-none transition placeholder:text-slate-400"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -230,7 +230,7 @@ export function AdminDashboardClient() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 focus:border-sky-400 dark:focus:border-sky-500 outline-none"
+                className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-sky-400 dark:focus:border-sky-500 outline-none"
               >
                 <option value="all">All Status</option>
                 <option value="PENDING_PAYMENT">Pending Payment</option>
@@ -404,7 +404,7 @@ export function AdminDashboardClient() {
                   onChange={(e) => setAdminNote(e.target.value)}
                   rows={3}
                   placeholder="Private note visible only to admins..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:border-sky-400 dark:focus:border-sky-500 outline-none transition resize-none"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:border-sky-400 dark:focus:border-sky-500 outline-none transition resize-none placeholder:text-slate-400"
                 />
                 <button
                   onClick={handleSaveNote}
@@ -425,7 +425,7 @@ export function AdminDashboardClient() {
                         onChange={(e) => setRejectReason(e.target.value)}
                         rows={3}
                         placeholder="Explain why this registration is being rejected..."
-                        className="w-full px-3 py-2 rounded-xl border border-red-200 dark:border-red-800 text-sm focus:border-red-400 outline-none transition resize-none"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-xl border border-red-200 dark:border-red-800 text-sm focus:border-red-400 outline-none transition resize-none placeholder:text-slate-400"
                       />
                       <div className="flex gap-2">
                         <button onClick={() => { setShowRejectInput(false); setRejectReason(""); }} className="flex-1 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 dark:text-slate-500 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900 transition">Cancel</button>
