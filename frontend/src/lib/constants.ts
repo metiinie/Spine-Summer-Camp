@@ -15,10 +15,17 @@ export const SESSION_CONFIG = {
   },
 } as const;
 
-export const PAYMENT_CONFIG = {
-  bankName: "CBE Birr",
-  accountNumber: "1000123456789",
-  accountName: "Spine Summer Camp",
-};
+export const PAYMENT_ACCOUNTS = [
+  {
+    bankName: "CBE",
+    accountNumber: "1000259068626",
+    accountName: "Spine Sport Consultancy",
+  },
+  {
+    bankName: "Zemen Bank",
+    accountNumber: "1032210044060015",
+    accountName: "Spine Sport Consultancy",
+  }
+];
 
 export type SessionType = keyof typeof SESSION_CONFIG;

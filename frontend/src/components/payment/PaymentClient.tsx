@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Upload, CheckCircle2, AlertCircle, Copy, Check } from "lucide-react";
-import { PAYMENT_CONFIG } from "@/lib/constants";
+import { PAYMENT_ACCOUNTS } from "@/lib/constants";
 import { useTranslations } from "next-intl";
 
 interface PaymentClientProps {
@@ -91,21 +91,40 @@ export function PaymentClient({ registration }: PaymentClientProps) {
         {/* Payment Instructions */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-md border border-slate-100 dark:border-slate-800 mb-4">
           <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">{t("instructions")}</h2>
-          <div className="space-y-3">
+          <div className="space-y-3 mb-6">
             {[
-              { label: t("bank"), value: PAYMENT_CONFIG.bankName },
-              { label: t("accountNumber"), value: PAYMENT_CONFIG.accountNumber },
-              { label: t("accountName"), value: PAYMENT_CONFIG.accountName },
               { label: t("sessionLabel"), value: sessionLabel },
               { label: t("amount"), value: `${amount.toLocaleString()} ETB`, highlight: true },
             ].map(({ label, value, highlight }) => (
-              <div key={label} className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
+              <div key={label} className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-sm text-slate-500 dark:text-slate-400">{label}</span>
                 <span className={`font-semibold ${highlight ? "text-emerald-600 dark:text-emerald-400 text-lg" : "text-slate-800 dark:text-slate-100"}`}>{value}</span>
               </div>
             ))}
           </div>
-          <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+
+          <div className="space-y-4">
+            {PAYMENT_ACCOUNTS.map((account, idx) => (
+              <div key={idx} className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-500 dark:text-slate-400">{t("bank")}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-100">{account.bankName}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-500 dark:text-slate-400">{t("accountNumber")}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-100">{account.accountNumber}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-500 dark:text-slate-400">{t("accountName")}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-100">{account.accountName}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
             <p className="text-sm text-amber-700 dark:text-amber-400">
               {t("importantNote")}
             </p>
