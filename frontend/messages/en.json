@@ -60,7 +60,7 @@
         },
         {
           "question": "What payment methods are accepted?",
-          "answer": "Payment is accepted via CBE Birr transfer. After registering, you will receive bank account details and must upload your receipt to confirm enrollment."
+          "answer": "Payment is accepted via CBE or Zemen Bank transfer. After registering, you will receive bank account details and must upload your receipt to confirm enrollment."
         },
         {
           "question": "What should my child bring?",
@@ -223,7 +223,7 @@
       "accountName": "Account Name",
       "amount": "Amount to Pay",
       "uploadTitle": "Upload Payment Receipt",
-      "uploadSubtitle": "Drag & drop your CBE Birr receipt here, or click to browse",
+      "uploadSubtitle": "Drag & drop your payment receipt here, or click to browse",
       "uploadFormats": "Accepts JPG, PNG, PDF (max 5MB)",
       "uploading": "Uploading...",
       "uploaded": "Receipt uploaded successfully!",
