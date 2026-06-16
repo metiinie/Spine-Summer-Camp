@@ -117,7 +117,6 @@ export default function StatusPage() {
                     </div>
                     <div className="pt-2">
                       <p className={`font-semibold ${isComplete ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"}`}>
-                        {/* @ts-expect-error - Dynamic key usage */}
                         {t(`timeline.${s.key}`)}
                       </p>
                     </div>
