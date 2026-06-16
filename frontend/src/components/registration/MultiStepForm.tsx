@@ -33,10 +33,6 @@ import {
 
 const STORAGE_KEY = "spine_camp_registration";
 
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
 
 const STEPS = [
   { id: "camper", icon: User, label: "Camper Info" },
@@ -109,8 +105,8 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
 
   const handleNextCamper = camperForm.handleSubmit((data) => {
     // Parse numeric fields from string inputs
-    const height = parseFloat(data.height as any);
-    const weight = parseFloat(data.weight as any);
+    const height = parseFloat(data.height as string);
+    const weight = parseFloat(data.weight as string);
 
     // Validate numeric ranges
     if (isNaN(height) || height < 50 || height > 220) {
@@ -152,7 +148,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
     setIsSubmitting(true);
     try {
       // Convert string numeric fields to numbers for the backend
-      const { ...restCamper } = formData.camper as any;
+      const { ...restCamper } = formData.camper as Record<string, unknown>;
       const payload = {
         ...formData,
         camper: {

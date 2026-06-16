@@ -80,7 +80,7 @@ export default function CheckStatusPage() {
         setStatus(data);
         setError(null);
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
       setStatus(null);
     } finally {

@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Home, PenLine, Info, Search } from "lucide-react";
 
 interface BottomTabBarProps {
-  locale: string;
   translations: {
     home: string;
     register: string;
@@ -22,7 +21,7 @@ interface TabItem {
   matchPaths: string[];
 }
 
-export function BottomTabBar({ locale, translations }: BottomTabBarProps) {
+export function BottomTabBar({ translations }: BottomTabBarProps) {
   const pathname = usePathname();
 
   const tabs: TabItem[] = [

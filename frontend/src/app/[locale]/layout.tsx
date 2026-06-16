@@ -58,7 +58,7 @@ export default async function LocaleLayout({
             <main className="pb-20 md:pb-0">
               {children}
             </main>
-            <BottomTabBar locale={locale} translations={translations} />
+            <BottomTabBar translations={translations} />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
