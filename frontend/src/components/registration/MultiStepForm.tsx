@@ -83,7 +83,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
   }, [step, formData]);
 
   const camperForm = useForm<CamperFormData>({
-    resolver: zodResolver(camperSchema),
+    resolver: zodResolver(camperSchema) as never,
     defaultValues: formData.camper,
   });
   const parentForm = useForm<ParentFormData>({
