@@ -3,11 +3,12 @@ import {
   Body, BadRequestException, ConflictException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 import { randomUUID } from 'crypto';
-import { unlink } from 'fs/promises';
 import { PrismaService } from '../prisma.service';
 import { AuditService } from '../common/audit/audit.service';
+import { v2 as cloudinary } from 'cloudinary';
+import { Readable } from 'stream';
 
 // Only allow image and PDF receipts
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
@@ -22,19 +23,14 @@ export class UploadsController {
   constructor(
     private prisma: PrismaService,
     private audit: AuditService,
-  ) {}
+  ) {
+    // Cloudinary reads CLOUDINARY_URL from env by default
+  }
 
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './public/uploads',
-        filename: (_req, file, cb) => {
-          // UUID filename with original extension preserved
-          const ext = file.originalname.split('.').pop()?.toLowerCase() ?? '';
-          cb(null, ext ? `receipt-${randomUUID()}.${ext}` : `receipt-${randomUUID()}`);
-        },
-      }),
+      storage: memoryStorage(),
       limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
       fileFilter: (_req, file, cb) => {
         const ext = file.originalname.split('.').pop()?.toLowerCase() ?? '';
@@ -55,7 +51,6 @@ export class UploadsController {
     const referenceNumber = rawReferenceNumber?.trim().toUpperCase();
 
     if (!file || !registrationId || !referenceNumber) {
-      if (file?.path) await unlink(file.path).catch(() => undefined);
       throw new BadRequestException('Missing file, registration ID, or reference number');
     }
 
@@ -63,7 +58,6 @@ export class UploadsController {
       registrationId.length > MAX_ID_LENGTH ||
       !ID_PATTERN.test(registrationId)
     ) {
-      await unlink(file.path).catch(() => undefined);
       throw new BadRequestException('Invalid registration ID format');
     }
 
@@ -71,13 +65,43 @@ export class UploadsController {
       referenceNumber.length > 30 ||
       !referenceNumber.startsWith('SCAMP-')
     ) {
-      await unlink(file.path).catch(() => undefined);
       throw new BadRequestException('Invalid reference number format');
     }
 
     // --- Business logic ---
-    const appUrl = process.env.APP_URL || 'http://localhost:4000';
-    const receiptUrl = `${appUrl}/uploads/${file.filename}`;
+    // Check if registration exists before attempting upload
+    const existing = await this.prisma.registration.findFirst({
+      where: {
+        id: registrationId,
+        referenceNumber,
+        status: 'PENDING_PAYMENT',
+        deletedAt: null,
+      },
+    });
+
+    if (!existing) {
+      throw new ConflictException('Registration not found, already has a receipt, or reference number does not match');
+    }
+
+    let receiptUrl: string;
+    try {
+      const filename = `receipt-${randomUUID()}`;
+      receiptUrl = await new Promise<string>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: 'spine-summer-camp', public_id: filename, resource_type: 'auto' },
+          (error, result) => {
+            if (result) {
+              resolve(result.secure_url);
+            } else {
+              reject(error);
+            }
+          }
+        );
+        Readable.from(file.buffer).pipe(uploadStream);
+      });
+    } catch (err) {
+      throw new BadRequestException('Failed to upload file to Cloudinary. Ensure CLOUDINARY_URL is configured.');
+    }
 
     const updated = await this.prisma.registration.updateMany({
       where: {
@@ -90,8 +114,7 @@ export class UploadsController {
     });
 
     if (updated.count === 0) {
-      await unlink(file.path).catch(() => undefined);
-      throw new ConflictException('Registration not found, already has a receipt, or reference number does not match');
+      throw new ConflictException('Registration status changed during upload');
     }
 
     const reg = await this.prisma.registration.findUniqueOrThrow({

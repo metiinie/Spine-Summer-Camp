@@ -57,13 +57,13 @@ export declare class RegistrationsService {
         } | null;
     } & {
         id: string;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
         createdAt: Date;
         updatedAt: Date;
         rejectionReason: string | null;
         adminNote: string | null;
         session: import(".prisma/client").$Enums.SessionType;
         idempotencyKey: string | null;
-        status: import(".prisma/client").$Enums.RegistrationStatus;
         referenceNumber: string;
         amount: Prisma.Decimal;
         receiptUrl: string | null;
@@ -72,13 +72,13 @@ export declare class RegistrationsService {
     }>;
     findPaymentInfo(id: string): Promise<{
         amount: string;
+        id: string;
+        status: import(".prisma/client").$Enums.RegistrationStatus;
         camper: {
             firstName: string;
             lastName: string;
         } | null;
-        id: string;
         session: import(".prisma/client").$Enums.SessionType;
-        status: import(".prisma/client").$Enums.RegistrationStatus;
         referenceNumber: string;
         receiptUrl: string | null;
     }>;
@@ -140,13 +140,13 @@ export declare class RegistrationsService {
             } | null;
         } & {
             id: string;
+            status: import(".prisma/client").$Enums.RegistrationStatus;
             createdAt: Date;
             updatedAt: Date;
             rejectionReason: string | null;
             adminNote: string | null;
             session: import(".prisma/client").$Enums.SessionType;
             idempotencyKey: string | null;
-            status: import(".prisma/client").$Enums.RegistrationStatus;
             referenceNumber: string;
             amount: Prisma.Decimal;
             receiptUrl: string | null;

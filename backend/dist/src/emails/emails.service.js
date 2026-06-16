@@ -75,42 +75,50 @@ let EmailsService = EmailsService_1 = class EmailsService {
         if (!process.env.RESEND_API_KEY)
             return;
         const sessionLabel = session === "HALF_DAY" ? "Session 1 – Half Day" : "Session 2 – Full Day";
-        await this.resend.emails.send({
-            from: "Spine Summer Camp <noreply@spinecamp.com>",
+        const { error } = await this.resend.emails.send({
+            from: "Spine Summer Camp <onboarding@resend.dev>",
             to: [to],
             subject: `Registration Received – ${referenceNumber}`,
             html: `<p>Dear ${name}, registration for ${camperName} received.</p>`,
         });
+        if (error)
+            throw new Error(error.message);
     }
     async sendReceiptReceived(to, name, referenceNumber) {
         if (!process.env.RESEND_API_KEY)
             return;
-        await this.resend.emails.send({
-            from: "Spine Summer Camp <noreply@spinecamp.com>",
+        const { error } = await this.resend.emails.send({
+            from: "Spine Summer Camp <onboarding@resend.dev>",
             to: [to],
             subject: `Receipt Received – ${referenceNumber}`,
             html: `<p>Dear ${name}, receipt for ${referenceNumber} received. Under review.</p>`,
         });
+        if (error)
+            throw new Error(error.message);
     }
     async sendApproved(to, name, camperName, referenceNumber) {
         if (!process.env.RESEND_API_KEY)
             return;
-        await this.resend.emails.send({
-            from: "Spine Summer Camp <noreply@spinecamp.com>",
+        const { error } = await this.resend.emails.send({
+            from: "Spine Summer Camp <onboarding@resend.dev>",
             to: [to],
             subject: `🎉 Registration Approved – ${camperName}`,
             html: `<p>Dear ${name}, ${camperName}'s registration (${referenceNumber}) is APPROVED.</p>`,
         });
+        if (error)
+            throw new Error(error.message);
     }
     async sendRejected(to, name, camperName, referenceNumber, reason) {
         if (!process.env.RESEND_API_KEY)
             return;
-        await this.resend.emails.send({
-            from: "Spine Summer Camp <noreply@spinecamp.com>",
+        const { error } = await this.resend.emails.send({
+            from: "Spine Summer Camp <onboarding@resend.dev>",
             to: [to],
             subject: `Registration Update – ${camperName}`,
             html: `<p>Dear ${name}, ${camperName}'s registration (${referenceNumber}) was NOT approved.</p><p>Reason: ${reason}</p>`,
         });
+        if (error)
+            throw new Error(error.message);
     }
 };
 exports.EmailsService = EmailsService;

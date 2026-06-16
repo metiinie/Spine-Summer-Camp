@@ -17,9 +17,10 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const crypto_1 = require("crypto");
-const promises_1 = require("fs/promises");
 const prisma_service_1 = require("../prisma.service");
 const audit_service_1 = require("../common/audit/audit.service");
+const cloudinary_1 = require("cloudinary");
+const stream_1 = require("stream");
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
 const MAX_ID_LENGTH = 64;
@@ -35,22 +36,45 @@ let UploadsController = class UploadsController {
         const registrationId = rawRegistrationId?.trim();
         const referenceNumber = rawReferenceNumber?.trim().toUpperCase();
         if (!file || !registrationId || !referenceNumber) {
-            if (file?.path)
-                await (0, promises_1.unlink)(file.path).catch(() => undefined);
             throw new common_1.BadRequestException('Missing file, registration ID, or reference number');
         }
         if (registrationId.length > MAX_ID_LENGTH ||
             !ID_PATTERN.test(registrationId)) {
-            await (0, promises_1.unlink)(file.path).catch(() => undefined);
             throw new common_1.BadRequestException('Invalid registration ID format');
         }
         if (referenceNumber.length > 30 ||
             !referenceNumber.startsWith('SCAMP-')) {
-            await (0, promises_1.unlink)(file.path).catch(() => undefined);
             throw new common_1.BadRequestException('Invalid reference number format');
         }
-        const appUrl = process.env.APP_URL || 'http://localhost:4000';
-        const receiptUrl = `${appUrl}/uploads/${file.filename}`;
+        const existing = await this.prisma.registration.findFirst({
+            where: {
+                id: registrationId,
+                referenceNumber,
+                status: 'PENDING_PAYMENT',
+                deletedAt: null,
+            },
+        });
+        if (!existing) {
+            throw new common_1.ConflictException('Registration not found, already has a receipt, or reference number does not match');
+        }
+        let receiptUrl;
+        try {
+            const filename = `receipt-${(0, crypto_1.randomUUID)()}`;
+            receiptUrl = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary_1.v2.uploader.upload_stream({ folder: 'spine-summer-camp', public_id: filename, resource_type: 'auto' }, (error, result) => {
+                    if (result) {
+                        resolve(result.secure_url);
+                    }
+                    else {
+                        reject(error);
+                    }
+                });
+                stream_1.Readable.from(file.buffer).pipe(uploadStream);
+            });
+        }
+        catch (err) {
+            throw new common_1.BadRequestException('Failed to upload file to Cloudinary. Ensure CLOUDINARY_URL is configured.');
+        }
         const updated = await this.prisma.registration.updateMany({
             where: {
                 id: registrationId,
@@ -61,8 +85,7 @@ let UploadsController = class UploadsController {
             data: { receiptUrl, status: 'UNDER_REVIEW' },
         });
         if (updated.count === 0) {
-            await (0, promises_1.unlink)(file.path).catch(() => undefined);
-            throw new common_1.ConflictException('Registration not found, already has a receipt, or reference number does not match');
+            throw new common_1.ConflictException('Registration status changed during upload');
         }
         const reg = await this.prisma.registration.findUniqueOrThrow({
             where: { id: registrationId },
@@ -96,13 +119,7 @@ exports.UploadsController = UploadsController;
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './public/uploads',
-            filename: (_req, file, cb) => {
-                const ext = file.originalname.split('.').pop()?.toLowerCase() ?? '';
-                cb(null, ext ? `receipt-${(0, crypto_1.randomUUID)()}.${ext}` : `receipt-${(0, crypto_1.randomUUID)()}`);
-            },
-        }),
+        storage: (0, multer_1.memoryStorage)(),
         limits: { fileSize: 5 * 1024 * 1024 },
         fileFilter: (_req, file, cb) => {
             const ext = file.originalname.split('.').pop()?.toLowerCase() ?? '';

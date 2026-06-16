@@ -39,34 +39,12 @@ const nextConfig = {
   },
   async rewrites() {
     return [
-      {
-        source: '/api/registrations',
-        destination: `${BACKEND_URL}/registrations`,
-      },
-      {
-        source: '/api/registrations/:path*',
-        destination: `${BACKEND_URL}/registrations/:path*`,
-      },
-      {
-        source: '/api/admin/:path*',
-        destination: `${BACKEND_URL}/admin/:path*`,
-      },
-      {
-        source: '/api/upload-receipt',
-        destination: `${BACKEND_URL}/upload-receipt`,
-      },
       // Proxy receipt images through Next.js so the browser hits same-origin
       {
         source: '/uploads/:path*',
         destination: `${BACKEND_URL}/uploads/:path*`,
       },
     ];
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
   },
 };
 
