@@ -41,10 +41,10 @@ export class CamperDto {
 
   @IsIn(['YOUTH_S', 'YOUTH_M', 'YOUTH_L', 'ADULT_S', 'ADULT_M', 'ADULT_L', 'ADULT_XL']) tShirtSize: string;
 
-  @Type(() => Number)
+  @Transform(({ value }) => value != null ? Math.round(Number(value)) : value)
   @IsOptional() @IsInt() @Min(50) @Max(220) height?: number;
 
-  @Type(() => Number)
+  @Transform(({ value }) => value != null ? Math.round(Number(value)) : value)
   @IsOptional() @IsInt() @Min(10) @Max(150) weight?: number;
 }
 
@@ -82,6 +82,21 @@ export class ParentDto {
 
 export class SessionDto {
   @IsIn(['HALF_DAY', 'FULL_DAY']) session: string;
+
+  @IsIn([
+    'FULL_PACKAGE_FULL_DAY',
+    'FULL_PACKAGE_HALF_DAY',
+    'MIXED_PACKAGE',
+    'SELF_PACKAGE',
+  ])
+  packageType: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  @IsIn(['FOOTBALL', 'SWIMMING', 'CYCLING', 'CULTURAL_DANCE', 'KARATE'], {
+    each: true,
+  })
+  selectedActivities?: string[];
 }
 
 export class MedicalDto {
@@ -101,6 +116,7 @@ export class WaiverDto {
 
   @Transform(({ value }) => value === true || value === 'true')
   @IsBoolean() mediaRelease: boolean;
+
 
   @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsString() @IsNotEmpty() @MaxLength(150) parentSignature: string;

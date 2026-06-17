@@ -23,6 +23,8 @@ export declare class ParentDto {
 }
 export declare class SessionDto {
     session: string;
+    packageType: string;
+    selectedActivities?: string[];
 }
 export declare class MedicalDto {
     allergies?: string;

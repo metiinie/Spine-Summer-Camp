@@ -70,7 +70,7 @@ __decorate([
     __metadata("design:type", String)
 ], CamperDto.prototype, "tShirtSize", void 0);
 __decorate([
-    (0, class_transformer_1.Type)(() => Number),
+    (0, class_transformer_1.Transform)(({ value }) => value != null ? Math.round(Number(value)) : value),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(50),
@@ -78,7 +78,7 @@ __decorate([
     __metadata("design:type", Number)
 ], CamperDto.prototype, "height", void 0);
 __decorate([
-    (0, class_transformer_1.Type)(() => Number),
+    (0, class_transformer_1.Transform)(({ value }) => value != null ? Math.round(Number(value)) : value),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(10),
@@ -171,12 +171,31 @@ __decorate([
 ], ParentDto.prototype, "houseNumber", void 0);
 class SessionDto {
     session;
+    packageType;
+    selectedActivities;
 }
 exports.SessionDto = SessionDto;
 __decorate([
     (0, class_validator_1.IsIn)(['HALF_DAY', 'FULL_DAY']),
     __metadata("design:type", String)
 ], SessionDto.prototype, "session", void 0);
+__decorate([
+    (0, class_validator_1.IsIn)([
+        'FULL_PACKAGE_FULL_DAY',
+        'FULL_PACKAGE_HALF_DAY',
+        'MIXED_PACKAGE',
+        'SELF_PACKAGE',
+    ]),
+    __metadata("design:type", String)
+], SessionDto.prototype, "packageType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsIn)(['FOOTBALL', 'SWIMMING', 'CYCLING', 'CULTURAL_DANCE', 'KARATE'], {
+        each: true,
+    }),
+    __metadata("design:type", Array)
+], SessionDto.prototype, "selectedActivities", void 0);
 class MedicalDto {
     allergies;
     conditions;

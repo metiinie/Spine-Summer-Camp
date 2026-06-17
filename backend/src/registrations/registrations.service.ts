@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import {
   Gender,
+  MainActivity,
+  PackageType,
   Prisma,
   RegistrationStatus,
   SessionType,
@@ -37,6 +39,28 @@ const generateReferenceSuffix = customAlphabet(
   REFERENCE_NUMBER_LENGTH,
 );
 
+const PACKAGE_PRICES: Record<string, number> = {
+  FULL_PACKAGE_FULL_DAY: 40000,
+  FULL_PACKAGE_HALF_DAY: 26000,
+  MIXED_PACKAGE: 24000,
+  SELF_PACKAGE: 22000,
+};
+
+const PACKAGE_SESSION: Record<string, SessionType> = {
+  FULL_PACKAGE_FULL_DAY: SessionType.FULL_DAY,
+  FULL_PACKAGE_HALF_DAY: SessionType.HALF_DAY,
+  MIXED_PACKAGE: SessionType.HALF_DAY,
+  SELF_PACKAGE: SessionType.HALF_DAY,
+};
+
+const ALL_MAIN_ACTIVITIES: MainActivity[] = [
+  MainActivity.FOOTBALL,
+  MainActivity.SWIMMING,
+  MainActivity.CYCLING,
+  MainActivity.CULTURAL_DANCE,
+  MainActivity.KARATE,
+];
+
 type EmailOutboxClient = Pick<Prisma.TransactionClient, 'emailOutbox'>;
 
 function isPrismaError(error: unknown, code: string) {
@@ -64,6 +88,25 @@ export class RegistrationsService {
   async create(body: CreateRegistrationDto) {
     const { camper, parent, session, medical, waiver, idempotencyKey } = body;
 
+    // Resolve package type, price, session, and activities
+    const pkgType = session.packageType as PackageType;
+    const resolvedSession = PACKAGE_SESSION[pkgType] ?? (session.session as SessionType);
+    const amount = PACKAGE_PRICES[pkgType] ?? (resolvedSession === SessionType.FULL_DAY ? 40000 : 26000);
+
+    // Determine selected activities based on package
+    let activities: MainActivity[];
+    if (pkgType === PackageType.FULL_PACKAGE_FULL_DAY || pkgType === PackageType.FULL_PACKAGE_HALF_DAY) {
+      activities = ALL_MAIN_ACTIVITIES;
+    } else {
+      activities = (session.selectedActivities ?? []).map((a) => a as MainActivity);
+      if (pkgType === PackageType.MIXED_PACKAGE && activities.length !== 2) {
+        throw new BadRequestException('Mixed package requires exactly 2 main activities');
+      }
+      if (pkgType === PackageType.SELF_PACKAGE && activities.length !== 1) {
+        throw new BadRequestException('Self package requires exactly 1 main activity');
+      }
+    }
+
     if (idempotencyKey) {
       const existing = await this.prisma.registration.findUnique({
         where: { idempotencyKey },
@@ -85,8 +128,10 @@ export class RegistrationsService {
             data: {
               referenceNumber,
               status: RegistrationStatus.PENDING_PAYMENT,
-              session: session.session as SessionType,
-              amount: session.session === 'HALF_DAY' ? 26000 : 40000,
+              session: resolvedSession,
+              packageType: pkgType,
+              selectedActivities: activities,
+              amount,
               idempotencyKey,
               camper: {
                 create: {
@@ -202,6 +247,8 @@ export class RegistrationsService {
         referenceNumber: true,
         amount: true,
         session: true,
+        packageType: true,
+        selectedActivities: true,
         status: true,
         receiptUrl: true,
         camper: { select: { firstName: true, lastName: true } },
@@ -391,7 +438,9 @@ export class RegistrationsService {
     const header = [
       'Reference',
       'Status',
+      'Package',
       'Session',
+      'Selected Activities',
       'Amount',
       'Camper First Name',
       'Camper Last Name',
@@ -439,7 +488,9 @@ export class RegistrationsService {
           [
             registration.referenceNumber,
             registration.status,
+            registration.packageType ?? '',
             registration.session,
+            (registration.selectedActivities ?? []).join('; '),
             registration.amount.toString(),
             registration.camper?.firstName,
             registration.camper?.lastName,

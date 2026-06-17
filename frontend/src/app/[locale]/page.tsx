@@ -24,12 +24,12 @@ interface HomePageProps {
 
 export default async function HomePage({ params: { locale } }: HomePageProps) {
   const t = await getTranslations({ locale, namespace: "hero" });
-  const tSessions = await getTranslations({ locale, namespace: "sessions" });
+  const tPackages = await getTranslations({ locale, namespace: "packages" });
   const tFaq = await getTranslations({ locale, namespace: "faq" });
 
-  const halfDayFeatures: string[] = tSessions.raw("halfDay.features") as string[];
-  const fullDayFeatures: string[] = tSessions.raw("fullDay.features") as string[];
   const faqItems: { question: string; answer: string }[] = tFaq.raw("items") as { question: string; answer: string }[];
+  
+  const packageKeys = ["fullDay", "halfDay", "mixed", "self"] as const;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
@@ -127,71 +127,76 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-              {tSessions("title")}
+              {tPackages("title")}
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">{tSessions("subtitle")}</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{tPackages("subtitle")}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            {/* Half Day */}
-            <div className="group relative bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-transparent hover:border-sky-300 shadow-md hover:shadow-xl transition-all duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300 text-xs font-semibold mb-3">
-                  <Sun className="w-3 h-3" />
-                  {tSessions("halfDay.session")}
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-0.5">{tSessions("halfDay.title")}</h3>
-                <p className="text-sky-600 text-sm font-semibold mb-0.5">{tSessions("halfDay.hours")}</p>
-                <p className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mb-4">
-                  {tSessions("halfDay.price")} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">ETB</span>
-                </p>
-                <ul className="space-y-2 mb-6">
-                  {halfDayFeatures.map((f: string) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <CheckCircle2 className="w-4 h-4 text-sky-500 flex-shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href={`/register`}
-                  className="block w-full text-center py-2.5 rounded-lg bg-sky-500 text-white text-sm font-semibold hover:bg-sky-600 transition-colors"
+            {packageKeys.map((key) => {
+              const features = tPackages.raw(`${key}.features`) as string[];
+              const isPopular = key === "fullDay";
+              
+              return (
+                <div 
+                  key={key} 
+                  className={`group relative rounded-2xl p-6 transition-all duration-300 ${
+                    isPopular 
+                      ? "bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-emerald-400/30 hover:border-emerald-400 shadow-xl hover:shadow-2xl" 
+                      : "bg-white dark:bg-slate-900 border-2 border-transparent hover:border-sky-300 shadow-md hover:shadow-xl"
+                  }`}
                 >
-                  {tSessions("title")}
-                </Link>
-              </div>
-            </div>
-
-            {/* Full Day */}
-            <div className="group relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 border-2 border-emerald-400/30 hover:border-emerald-400 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <div className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-emerald-400 text-slate-900 text-xs font-bold">
-                Most Popular
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-900/50 text-emerald-400 text-xs font-semibold mb-3">
-                <Star className="w-3 h-3" />
-                {tSessions("fullDay.session")}
-              </div>
-              <h3 className="text-lg font-bold text-white mb-0.5">{tSessions("fullDay.title")}</h3>
-              <p className="text-emerald-400 text-sm font-semibold mb-0.5">{tSessions("fullDay.hours")}</p>
-              <p className="text-2xl font-extrabold text-white mb-4">
-                {tSessions("fullDay.price")} <span className="text-sm font-semibold text-slate-400">ETB</span>
-              </p>
-              <ul className="space-y-2 mb-6">
-                {fullDayFeatures.map((f: string) => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={`/register`}
-                className="block w-full text-center py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-sky-500 text-white text-sm font-semibold hover:opacity-90 transition-opacity"
-              >
-                {tSessions("title")}
-              </Link>
-            </div>
+                  {!isPopular && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  )}
+                  
+                  <div className="relative">
+                    {isPopular && (
+                      <div className="absolute top-0 right-0 px-2.5 py-0.5 rounded-full bg-emerald-400 text-slate-900 text-xs font-bold -mt-2 -mr-2">
+                        Most Popular
+                      </div>
+                    )}
+                    
+                    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold mb-3 ${
+                      isPopular ? "bg-emerald-900/50 text-emerald-400" : "bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300"
+                    }`}>
+                      {tPackages(`${key}.session`) === "FULL_DAY" ? <Star className="w-3 h-3" /> : <Sun className="w-3 h-3" />}
+                      {tPackages(`${key}.sessionName`)}
+                    </div>
+                    
+                    <h3 className={`text-lg font-bold mb-0.5 ${isPopular ? "text-white" : "text-slate-900 dark:text-slate-100"}`}>
+                      {tPackages(`${key}.title`)}
+                    </h3>
+                    <p className={`text-sm font-semibold mb-0.5 ${isPopular ? "text-emerald-400" : "text-sky-600"}`}>
+                      {tPackages(`${key}.hours`)}
+                    </p>
+                    <p className={`text-2xl font-extrabold mb-4 ${isPopular ? "text-white" : "text-slate-900 dark:text-slate-100"}`}>
+                      {tPackages(`${key}.price`)} <span className={`text-sm font-semibold ${isPopular ? "text-slate-400" : "text-slate-500 dark:text-slate-400"}`}>ETB</span>
+                    </p>
+                    
+                    <ul className="space-y-2 mb-6">
+                      {features.map((f: string, i: number) => (
+                        <li key={i} className={`flex items-start gap-2 text-sm ${isPopular ? "text-slate-300" : "text-slate-600 dark:text-slate-400"}`}>
+                          <CheckCircle2 className={`w-4 h-4 flex-shrink-0 mt-0.5 ${isPopular ? "text-emerald-400" : "text-sky-500"}`} />
+                          <span className="leading-tight">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <Link
+                      href={`/register`}
+                      className={`block w-full text-center py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                        isPopular 
+                          ? "bg-gradient-to-r from-emerald-500 to-sky-500 text-white hover:opacity-90" 
+                          : "bg-sky-500 text-white hover:bg-sky-600"
+                      }`}
+                    >
+                      {tPackages("cta")}
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Discounts & QR Code */}
@@ -200,20 +205,20 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
               <div className="flex-1">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 text-xs font-semibold mb-3">
                   <Gift className="w-3.5 h-3.5" />
-                  {tSessions("discounts.title")}
+                  {tPackages("discounts.title")}
                 </div>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                    {tSessions("discounts.twoKids")}
+                    {tPackages("discounts.twoKids")}
                   </li>
                   <li className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                    {tSessions("discounts.threeKids")}
+                    {tPackages("discounts.threeKids")}
                   </li>
                   <li className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                    {tSessions("discounts.fiveKids")}
+                    {tPackages("discounts.fiveKids")}
                   </li>
                 </ul>
               </div>

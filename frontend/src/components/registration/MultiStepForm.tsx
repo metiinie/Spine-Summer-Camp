@@ -18,7 +18,14 @@ import {
   type MedicalFormData,
   type WaiverFormData,
 } from "@/lib/validations";
-import { SESSION_CONFIG } from "@/lib/constants";
+import { 
+  SESSION_CONFIG, 
+  PACKAGE_CONFIG, 
+  PACKAGE_KEYS, 
+  MAIN_ACTIVITIES, 
+  GENERIC_ACTIVITIES,
+  type PackageKey
+} from "@/lib/constants";
 import {
   User,
   Users,
@@ -131,6 +138,11 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
     setStep(2);
   });
   const handleNextSession = sessionForm.handleSubmit((data) => {
+    // Determine the session based on the selected package
+    const pkgType = data.packageType as PackageKey;
+    if (pkgType) {
+      data.session = PACKAGE_CONFIG[pkgType].session;
+    }
     setFormData((prev) => ({ ...prev, session: data }));
     setStep(3);
   });
@@ -175,12 +187,15 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
     } catch (err: unknown) {
       console.error("Registration submit error:", err);
       alert(err instanceof Error ? err.message : "An error occurred. Please try again.");
-    } finally {
       setIsSubmitting(false);
     }
   };
 
-  const selectedSession = formData.session?.session
+  const selectedPackage = formData.session?.packageType
+    ? PACKAGE_CONFIG[formData.session.packageType as PackageKey]
+    : null;
+  
+  const selectedSessionConfig = formData.session?.session 
     ? SESSION_CONFIG[formData.session.session]
     : null;
 
@@ -357,7 +372,7 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                 type="submit"
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition mt-4"
               >
-                Next: Parent Info →
+                {t("buttons.next")}: {t("steps.parent")} →
               </button>
             </form>
           )}
@@ -440,40 +455,163 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
             </form>
           )}
 
-          {/* Step 2: Session */}
+          {/* Step 2: Package & Session */}
           {step === 2 && (
-            <form onSubmit={handleNextSession} className="space-y-5">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t("session.title")}</h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-6">{t("session.subtitle")}</p>
+            <form onSubmit={handleNextSession} className="space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{locale === "am" ? "ፓኬጅ ይምረጡ" : "Select Your Package"}</h2>
+                <p className="text-slate-500 dark:text-slate-400">{t("session.subtitle")}</p>
+              </div>
+
               <div className="space-y-4">
-                {(["HALF_DAY", "FULL_DAY"] as const).map((key) => {
-                  const config = SESSION_CONFIG[key];
-                  const selected = sessionForm.watch("session") === key;
+                {PACKAGE_KEYS.map((key) => {
+                  const config = PACKAGE_CONFIG[key];
+                  const selected = sessionForm.watch("packageType") === key;
                   return (
                     <label
                       key={key}
-                      className={`flex items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+                      className={`flex flex-col sm:flex-row items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all relative overflow-hidden ${
                         selected ? "border-sky-400 bg-sky-50 dark:bg-sky-900/20" : "border-slate-200 dark:border-slate-700 hover:border-sky-200 dark:hover:border-sky-500"
                       }`}
                     >
-                      <input type="radio" value={key} {...sessionForm.register("session")} className="mt-1 accent-sky-500" />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          {key === "HALF_DAY" ? <Sun className="w-4 h-4 text-sky-500" /> : <Star className="w-4 h-4 text-emerald-500" />}
-                          <span className="font-bold text-slate-900 dark:text-slate-100">{config.label.en}</span>
+                      {config.popular && (
+                        <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
+                          Most Popular
                         </div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{config.dates.en}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{config.hours.en}</p>
-                        <p className="text-xl font-extrabold text-slate-900 dark:text-slate-100">{config.price.toLocaleString()} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{config.currency}</span></p>
+                      )}
+                      <input 
+                        type="radio" 
+                        value={key} 
+                        {...sessionForm.register("packageType")}
+                        onChange={(e) => {
+                          const pkg = e.target.value as PackageKey;
+                          sessionForm.setValue("packageType", pkg);
+                          // Auto-derive session from the package
+                          sessionForm.setValue("session", PACKAGE_CONFIG[pkg].session);
+                          // Reset activities if rule changes, or auto-set for full packages
+                          const rule = PACKAGE_CONFIG[pkg].activityRule;
+                          if (rule === "all") {
+                            sessionForm.setValue("selectedActivities", MAIN_ACTIVITIES.map(a => a.key));
+                          } else {
+                            sessionForm.setValue("selectedActivities", []);
+                          }
+                          sessionForm.trigger("selectedActivities");
+                        }}
+                        className="mt-1.5 accent-sky-500" 
+                      />
+                      <div className="flex-1 w-full">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2">
+                            {config.session === "HALF_DAY" ? <Sun className="w-5 h-5 text-sky-500" /> : <Star className="w-5 h-5 text-emerald-500" />}
+                            <span className="font-bold text-lg text-slate-900 dark:text-slate-100">
+                              {locale === "am" ? config.label.am : config.label.en}
+                            </span>
+                          </div>
+                          <div className="text-left sm:text-right">
+                            <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                              {config.price.toLocaleString()} <span className="text-sm font-semibold text-slate-500">{config.currency}</span>
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 font-medium mb-3">
+                          {locale === "am" ? config.description.am : config.description.en}
+                        </p>
+                        
+                        {/* Generic Activities included in all packages */}
+                        <div className="bg-white/60 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-100 dark:border-slate-700/50 mb-3">
+                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Included Generic Programs</p>
+                          <div className="flex flex-wrap gap-2">
+                            {GENERIC_ACTIVITIES.map((act, i) => (
+                              <span key={i} className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300">
+                                <span>{act.emoji}</span> {locale === "am" ? act.category.am : act.category.en}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </label>
                   );
                 })}
               </div>
-              {sessionForm.formState.errors.session && (
-                <p className="text-red-500 text-sm">{sessionForm.formState.errors.session.message}</p>
+              {sessionForm.formState.errors.packageType && (
+                <p className="text-red-500 text-sm">{sessionForm.formState.errors.packageType.message}</p>
               )}
-              <div className="flex gap-3 mt-4">
+
+              {/* Activity Selection for Mixed/Self Packages */}
+              {(() => {
+                const selectedPkgType = sessionForm.watch("packageType") as PackageKey;
+                if (!selectedPkgType) return null;
+                
+                const rule = PACKAGE_CONFIG[selectedPkgType].activityRule;
+                if (rule === "all") return null;
+
+                const requiredCount = PACKAGE_CONFIG[selectedPkgType].requiredActivityCount;
+                const currentSelection = sessionForm.watch("selectedActivities") || [];
+                
+                return (
+                  <div className="bg-sky-50 dark:bg-slate-800/50 rounded-2xl p-5 md:p-6 border-2 border-sky-100 dark:border-slate-700 mt-6">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">
+                      {locale === "am" ? "ዋና እንቅስቃሴዎችን ይምረጡ" : "Choose Main Activities"}
+                    </h3>
+                    <p className="text-sm text-sky-700 dark:text-sky-300 mb-4 font-medium">
+                      {locale === "am" 
+                        ? `እባክዎ ${requiredCount} እንቅስቃሴ${requiredCount > 1 ? 'ዎችን' : ''} ይምረጡ (የተመረጡት: ${currentSelection.length}/${requiredCount})`
+                        : `Please select exactly ${requiredCount} activit${requiredCount > 1 ? 'ies' : 'y'} (Selected: ${currentSelection.length}/${requiredCount})`
+                      }
+                    </p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {MAIN_ACTIVITIES.map((activity) => {
+                        const isSelected = currentSelection.includes(activity.key);
+                        const isDisabled = !isSelected && currentSelection.length >= requiredCount;
+                        
+                        return (
+                          <label 
+                            key={activity.key}
+                            className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                              isSelected 
+                                ? "border-sky-500 bg-white dark:bg-slate-900 shadow-sm" 
+                                : isDisabled
+                                  ? "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 opacity-60 cursor-not-allowed"
+                                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-300"
+                            }`}
+                          >
+                            <input 
+                              type="checkbox" 
+                              value={activity.key}
+                              checked={isSelected}
+                              disabled={isDisabled}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
+                                let newSelection = [...currentSelection];
+                                if (checked && newSelection.length < requiredCount) {
+                                  newSelection.push(activity.key);
+                                } else if (!checked) {
+                                  newSelection = newSelection.filter(k => k !== activity.key);
+                                }
+                                sessionForm.setValue("selectedActivities", newSelection);
+                                sessionForm.trigger("selectedActivities");
+                              }}
+                              className="w-4 h-4 text-sky-500 rounded border-slate-300 focus:ring-sky-500 accent-sky-500"
+                            />
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl">{activity.emoji}</span>
+                              <span className={`font-semibold text-sm ${isSelected ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"}`}>
+                                {locale === "am" ? activity.label.am : activity.label.en}
+                              </span>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                    {sessionForm.formState.errors.selectedActivities && (
+                      <p className="text-red-500 text-sm mt-3">{sessionForm.formState.errors.selectedActivities.message}</p>
+                    )}
+                  </div>
+                );
+              })()}
+
+              <div className="flex gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button type="button" onClick={() => setStep(1)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-semibold hover:bg-slate-50 dark:bg-slate-800/50 transition">← {t("buttons.back")}</button>
                 <button type="submit" className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">{t("buttons.next")}: {t("steps.medical")} →</button>
               </div>
@@ -601,12 +739,32 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
                   <Row label="Email" value={formData.parent.primaryEmail} />
                   <Row label="Address" value={`${formData.parent.subCity}, Woreda ${formData.parent.district}`} />
                 </Section>
-                <Section title="Session">
-                  {selectedSession && (
+                <Section title="Package & Session">
+                  {selectedPackage && selectedSessionConfig && (
                     <>
-                      <Row label="Session" value={selectedSession.label.en} />
-                      <Row label="Dates" value={selectedSession.dates.en} />
-                      <Row label="Amount" value={`${selectedSession.price.toLocaleString()} ${selectedSession.currency}`} />
+                      <Row label="Package" value={locale === "am" ? selectedPackage.label.am : selectedPackage.label.en} />
+                      <Row label="Session" value={locale === "am" ? selectedSessionConfig.label.am : selectedSessionConfig.label.en} />
+                      <Row label="Dates" value={locale === "am" ? selectedSessionConfig.dates.am : selectedSessionConfig.dates.en} />
+                      <Row label="Amount" value={`${selectedPackage.price.toLocaleString()} ${selectedPackage.currency}`} />
+                      
+                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Selected Main Activities</p>
+                        <div className="flex flex-wrap gap-2">
+                          {formData.session.selectedActivities && formData.session.selectedActivities.length > 0 ? (
+                            formData.session.selectedActivities.map(key => {
+                              const act = MAIN_ACTIVITIES.find(a => a.key === key);
+                              if (!act) return null;
+                              return (
+                                <span key={key} className="inline-flex items-center gap-1 bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 px-2.5 py-1 rounded-md text-xs font-semibold">
+                                  {act.emoji} {locale === "am" ? act.label.am : act.label.en}
+                                </span>
+                              );
+                            })
+                          ) : (
+                            <span className="text-sm text-slate-500">All Included</span>
+                          )}
+                        </div>
+                      </div>
                     </>
                   )}
                 </Section>

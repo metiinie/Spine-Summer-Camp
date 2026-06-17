@@ -29,6 +29,25 @@ const VALID_TRANSITIONS = {
 const REFERENCE_NUMBER_LENGTH = 8;
 const MAX_REFERENCE_ATTEMPTS = 5;
 const generateReferenceSuffix = (0, nanoid_1.customAlphabet)('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', REFERENCE_NUMBER_LENGTH);
+const PACKAGE_PRICES = {
+    FULL_PACKAGE_FULL_DAY: 40000,
+    FULL_PACKAGE_HALF_DAY: 26000,
+    MIXED_PACKAGE: 24000,
+    SELF_PACKAGE: 22000,
+};
+const PACKAGE_SESSION = {
+    FULL_PACKAGE_FULL_DAY: client_1.SessionType.FULL_DAY,
+    FULL_PACKAGE_HALF_DAY: client_1.SessionType.HALF_DAY,
+    MIXED_PACKAGE: client_1.SessionType.HALF_DAY,
+    SELF_PACKAGE: client_1.SessionType.HALF_DAY,
+};
+const ALL_MAIN_ACTIVITIES = [
+    client_1.MainActivity.FOOTBALL,
+    client_1.MainActivity.SWIMMING,
+    client_1.MainActivity.CYCLING,
+    client_1.MainActivity.CULTURAL_DANCE,
+    client_1.MainActivity.KARATE,
+];
 function isPrismaError(error, code) {
     return (typeof error === 'object' &&
         error !== null &&
@@ -49,6 +68,22 @@ let RegistrationsService = class RegistrationsService {
     }
     async create(body) {
         const { camper, parent, session, medical, waiver, idempotencyKey } = body;
+        const pkgType = session.packageType;
+        const resolvedSession = PACKAGE_SESSION[pkgType] ?? session.session;
+        const amount = PACKAGE_PRICES[pkgType] ?? (resolvedSession === client_1.SessionType.FULL_DAY ? 40000 : 26000);
+        let activities;
+        if (pkgType === client_1.PackageType.FULL_PACKAGE_FULL_DAY || pkgType === client_1.PackageType.FULL_PACKAGE_HALF_DAY) {
+            activities = ALL_MAIN_ACTIVITIES;
+        }
+        else {
+            activities = (session.selectedActivities ?? []).map((a) => a);
+            if (pkgType === client_1.PackageType.MIXED_PACKAGE && activities.length !== 2) {
+                throw new common_1.BadRequestException('Mixed package requires exactly 2 main activities');
+            }
+            if (pkgType === client_1.PackageType.SELF_PACKAGE && activities.length !== 1) {
+                throw new common_1.BadRequestException('Self package requires exactly 1 main activity');
+            }
+        }
         if (idempotencyKey) {
             const existing = await this.prisma.registration.findUnique({
                 where: { idempotencyKey },
@@ -68,8 +103,10 @@ let RegistrationsService = class RegistrationsService {
                         data: {
                             referenceNumber,
                             status: client_1.RegistrationStatus.PENDING_PAYMENT,
-                            session: session.session,
-                            amount: session.session === 'HALF_DAY' ? 26000 : 40000,
+                            session: resolvedSession,
+                            packageType: pkgType,
+                            selectedActivities: activities,
+                            amount,
                             idempotencyKey,
                             camper: {
                                 create: {
@@ -181,6 +218,8 @@ let RegistrationsService = class RegistrationsService {
                 referenceNumber: true,
                 amount: true,
                 session: true,
+                packageType: true,
+                selectedActivities: true,
                 status: true,
                 receiptUrl: true,
                 camper: { select: { firstName: true, lastName: true } },
@@ -345,7 +384,9 @@ let RegistrationsService = class RegistrationsService {
         const header = [
             'Reference',
             'Status',
+            'Package',
             'Session',
+            'Selected Activities',
             'Amount',
             'Camper First Name',
             'Camper Last Name',
@@ -389,7 +430,9 @@ let RegistrationsService = class RegistrationsService {
             rows.push(...regs.map((registration) => [
                 registration.referenceNumber,
                 registration.status,
+                registration.packageType ?? '',
                 registration.session,
+                (registration.selectedActivities ?? []).join('; '),
                 registration.amount.toString(),
                 registration.camper?.firstName,
                 registration.camper?.lastName,

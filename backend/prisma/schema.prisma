@@ -4,7 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -23,6 +24,21 @@ enum RegistrationStatus {
 enum SessionType {
   HALF_DAY
   FULL_DAY
+}
+
+enum PackageType {
+  FULL_PACKAGE_FULL_DAY
+  FULL_PACKAGE_HALF_DAY
+  MIXED_PACKAGE
+  SELF_PACKAGE
+}
+
+enum MainActivity {
+  FOOTBALL
+  SWIMMING
+  CYCLING
+  CULTURAL_DANCE
+  KARATE
 }
 
 enum Gender {
@@ -55,6 +71,8 @@ model Registration {
   referenceNumber String             @unique
   status          RegistrationStatus @default(PENDING_PAYMENT)
   session         SessionType
+  packageType     PackageType?
+  selectedActivities MainActivity[]
   amount          Decimal
   receiptUrl      String?
   adminNote       String?
@@ -73,6 +91,7 @@ model Registration {
 
   @@index([status])
   @@index([session])
+  @@index([packageType])
 }
 
 model Camper {

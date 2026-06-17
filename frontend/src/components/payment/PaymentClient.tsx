@@ -2,7 +2,12 @@
 
 import { useState, useRef } from "react";
 import { Upload, CheckCircle2, AlertCircle, Copy, Check, Building2 } from "lucide-react";
-import { PAYMENT_ACCOUNTS } from "@/lib/constants";
+import { 
+  PAYMENT_ACCOUNTS, 
+  PACKAGE_CONFIG, 
+  MAIN_ACTIVITIES,
+  type PackageKey
+} from "@/lib/constants";
 import { useTranslations } from "next-intl";
 
 interface PaymentClientProps {
@@ -11,6 +16,8 @@ interface PaymentClientProps {
     referenceNumber: string;
     amount: number | string;
     session: string;
+    packageType?: string | null;
+    selectedActivities?: string[] | null;
     status: string;
     receiptUrl: string | null;
     camper: { firstName: string; lastName: string } | null;
@@ -66,8 +73,11 @@ export function PaymentClient({ registration }: PaymentClientProps) {
     }
   };
 
-  const sessionLabel = registration.session === "HALF_DAY" ? t("halfDay") : t("fullDay");
   const amount = Number(registration.amount);
+  const pkgConfig = registration.packageType ? PACKAGE_CONFIG[registration.packageType as PackageKey] : null;
+  const packageLabel = pkgConfig 
+    ? (t.raw("locale") === "am" ? pkgConfig.label.am : pkgConfig.label.en) 
+    : (registration.session === "HALF_DAY" ? t("halfDay") : t("fullDay"));
 
   // Bank brand colors for visual distinction
   const bankStyles = [
@@ -124,16 +134,45 @@ export function PaymentClient({ registration }: PaymentClientProps) {
           <p className="text-xs text-slate-400 mt-3">{t("saveNumber")}</p>
         </div>
 
-        {/* Session & Amount Summary */}
+        {/* Package & Amount Summary */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-lg border border-slate-100 dark:border-slate-800 mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t("sessionLabel")}</p>
-              <p className="text-lg font-semibold text-slate-800 dark:text-slate-100">{sessionLabel}</p>
+              <p className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-1">{packageLabel}</p>
+              
+              {pkgConfig && (
+                <div className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                  <p className="mb-2">🗓 {t.raw("locale") === "am" ? pkgConfig.description.am : pkgConfig.description.en}</p>
+                  
+                  {registration.selectedActivities && registration.selectedActivities.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <span className="text-xs font-semibold text-slate-400 uppercase mr-1 mt-1 block w-full">Activities:</span>
+                      {registration.selectedActivities.map(actKey => {
+                        const act = MAIN_ACTIVITIES.find(a => a.key === actKey);
+                        if (!act) return null;
+                        return (
+                          <span key={actKey} className="inline-flex items-center gap-1 bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 px-2 py-0.5 rounded text-xs font-medium">
+                            {act.emoji} {t.raw("locale") === "am" ? act.label.am : act.label.en}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {pkgConfig.activityRule === "all" && (
+                    <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <span className="text-xs font-semibold text-slate-400 uppercase mr-1 mt-1 block w-full">Activities:</span>
+                      <span className="inline-flex items-center bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-xs font-medium">
+                        ✓ All Included
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="text-right">
+            <div className="text-left md:text-right mt-2 md:mt-0 w-full md:w-auto border-t md:border-t-0 border-slate-100 dark:border-slate-800 pt-4 md:pt-0">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t("amount")}</p>
-              <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+              <p className="text-2xl md:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
                 {amount.toLocaleString()} <span className="text-base font-semibold">ETB</span>
               </p>
             </div>

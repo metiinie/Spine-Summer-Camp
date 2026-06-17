@@ -16,31 +16,56 @@
       "cta": "Register Now",
       "aboutUs": "Learn More About Us"
     },
-    "sessions": {
-      "title": "Choose Your Session",
-      "subtitle": "Two flexible options designed to fit your family's schedule",
-      "halfDay": {
-        "title": "Half Day",
-        "session": "Session 1",
-        "hours": "3:00 – 6:30 (Local Time)",
-        "price": "26,000",
-        "features": [
-          "Critical Thinking & Public Speaking",
-          "Arts & Crafts",
-          "Swimming",
-          "Nutritious Snacks Included"
-        ]
-      },
+    "packages": {
+      "title": "Choose Your Package",
+      "subtitle": "Flexible options designed to fit your family's schedule and interests",
+      "cta": "Select Package",
       "fullDay": {
-        "title": "Full Day",
-        "session": "Session 2",
+        "title": "Full Package – Full Day",
+        "session": "FULL_DAY",
+        "sessionName": "Session 2",
         "hours": "3:00 – 10:00 (Local Time)",
         "price": "40,000",
         "features": [
-          "All half-day activities",
-          "Health and fitness assessments with tailored nutrition",
-          "Chess & Team Games",
-          "Cycling & Football"
+          "All 5 Main Activities Included",
+          "All Generic Programs Included",
+          "Full Day Supervision"
+        ]
+      },
+      "halfDay": {
+        "title": "Full Package – Half Day",
+        "session": "HALF_DAY",
+        "sessionName": "Session 1",
+        "hours": "3:00 – 6:30 (Local Time)",
+        "price": "26,000",
+        "features": [
+          "All 5 Main Activities Included",
+          "All Generic Programs Included",
+          "Half Day Supervision"
+        ]
+      },
+      "mixed": {
+        "title": "Mixed Package",
+        "session": "HALF_DAY",
+        "sessionName": "Session 1",
+        "hours": "3:00 – 6:30 (Local Time)",
+        "price": "24,000",
+        "features": [
+          "Choose 2 Main Activities",
+          "All Generic Programs Included",
+          "Half Day Supervision"
+        ]
+      },
+      "self": {
+        "title": "Self Package",
+        "session": "HALF_DAY",
+        "sessionName": "Session 1",
+        "hours": "3:00 – 6:30 (Local Time)",
+        "price": "22,000",
+        "features": [
+          "Choose 1 Main Activity",
+          "All Generic Programs Included",
+          "Half Day Supervision"
         ]
       },
       "discounts": {

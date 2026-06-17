@@ -26,8 +26,26 @@ export const parentSchema = z.object({
 });
 
 export const sessionSchema = z.object({
-  session: z.enum(["HALF_DAY", "FULL_DAY"], { message: "Please select a session" }),
-});
+  session: z.enum(["HALF_DAY", "FULL_DAY"]).optional(),
+  packageType: z.enum(
+    ["FULL_PACKAGE_FULL_DAY", "FULL_PACKAGE_HALF_DAY", "MIXED_PACKAGE", "SELF_PACKAGE"],
+    { message: "Please select a package" }
+  ),
+  selectedActivities: z
+    .array(z.enum(["FOOTBALL", "SWIMMING", "CYCLING", "CULTURAL_DANCE", "KARATE"]))
+    .optional(),
+}).refine(
+  (data) => {
+    const actCount = data.selectedActivities?.length || 0;
+    if (data.packageType === "MIXED_PACKAGE") return actCount === 2;
+    if (data.packageType === "SELF_PACKAGE") return actCount === 1;
+    return true; // Full packages: activities auto-set, no user pick needed
+  },
+  {
+    message: "Please select the correct number of activities for your package",
+    path: ["selectedActivities"],
+  }
+);
 
 export const medicalSchema = z.object({
   allergies: z.string().optional(),

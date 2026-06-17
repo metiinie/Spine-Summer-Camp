@@ -62,6 +62,8 @@ export declare class RegistrationsService {
         rejectionReason: string | null;
         adminNote: string | null;
         session: import(".prisma/client").$Enums.SessionType;
+        packageType: import(".prisma/client").$Enums.PackageType | null;
+        selectedActivities: import(".prisma/client").$Enums.MainActivity[];
         idempotencyKey: string | null;
         status: import(".prisma/client").$Enums.RegistrationStatus;
         referenceNumber: string;
@@ -78,6 +80,8 @@ export declare class RegistrationsService {
         } | null;
         id: string;
         session: import(".prisma/client").$Enums.SessionType;
+        packageType: import(".prisma/client").$Enums.PackageType | null;
+        selectedActivities: import(".prisma/client").$Enums.MainActivity[];
         status: import(".prisma/client").$Enums.RegistrationStatus;
         referenceNumber: string;
         receiptUrl: string | null;
@@ -145,6 +149,8 @@ export declare class RegistrationsService {
             rejectionReason: string | null;
             adminNote: string | null;
             session: import(".prisma/client").$Enums.SessionType;
+            packageType: import(".prisma/client").$Enums.PackageType | null;
+            selectedActivities: import(".prisma/client").$Enums.MainActivity[];
             idempotencyKey: string | null;
             status: import(".prisma/client").$Enums.RegistrationStatus;
             referenceNumber: string;
