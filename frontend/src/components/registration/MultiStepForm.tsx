@@ -202,8 +202,8 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
           : {}),
         waiver: {
           ...formData.waiver,
-          liabilityRelease: formData.waiver.liabilityRelease === true || formData.waiver.liabilityRelease === "true",
-          mediaRelease: formData.waiver.mediaRelease === "true" || formData.waiver.mediaRelease === true,
+          liabilityRelease: formData.waiver.liabilityRelease === true,
+          mediaRelease: formData.waiver.mediaRelease === "true",
         },
       };
       const res = await fetch("/api/registrations", {
