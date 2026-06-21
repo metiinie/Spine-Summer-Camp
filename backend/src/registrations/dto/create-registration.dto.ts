@@ -21,6 +21,14 @@ import { Type, Transform } from 'class-transformer';
 const PHONE_PATTERN = /^\+?[0-9\s().-]{9,20}$/;
 const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9_-]{8,128}$/;
 
+/** Treat blank optional inputs as absent so @IsOptional() skips validation. */
+const trimOrUndefined = ({ value }: { value: unknown }) => {
+  if (value == null) return undefined;
+  if (typeof value !== 'string') return value;
+  const trimmed = value.trim();
+  return trimmed === '' ? undefined : trimmed;
+};
+
 export class CamperDto {
   @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsString() @IsNotEmpty() @MaxLength(100) firstName: string;
@@ -61,13 +69,13 @@ export class ParentDto {
   @Transform(({ value }) => typeof value === 'string' ? value.trim().toLowerCase() : value)
   @IsEmail() @MaxLength(255) primaryEmail: string;
 
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(trimOrUndefined)
   @IsOptional() @IsString() @MaxLength(150) secondaryName?: string;
 
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(trimOrUndefined)
   @IsOptional() @IsString() @MaxLength(20) @Matches(PHONE_PATTERN, { message: 'Invalid secondary phone number' }) secondaryPhone?: string;
 
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(trimOrUndefined)
   @IsOptional() @IsString() @MaxLength(50) secondaryRelationship?: string;
 
   @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
@@ -76,7 +84,7 @@ export class ParentDto {
   @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsString() @IsNotEmpty() @MaxLength(100) district: string;
 
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(trimOrUndefined)
   @IsOptional() @IsString() @MaxLength(50) houseNumber?: string;
 }
 
@@ -100,13 +108,13 @@ export class SessionDto {
 }
 
 export class MedicalDto {
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(trimOrUndefined)
   @IsOptional() @IsString() @MaxLength(500) allergies?: string;
 
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(trimOrUndefined)
   @IsOptional() @IsString() @MaxLength(500) conditions?: string;
 
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(trimOrUndefined)
   @IsOptional() @IsString() @MaxLength(500) dietary?: string;
 }
 

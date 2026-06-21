@@ -40,6 +40,27 @@ import {
 
 const STORAGE_KEY = "spine_camp_registration";
 
+function omitEmptyStrings<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => !(typeof value === "string" && value.trim() === ""))
+  ) as Partial<T>;
+}
+
+function extractApiErrorMessage(data: unknown, fallback: string): string {
+  if (!data || typeof data !== "object") return fallback;
+  const record = data as Record<string, unknown>;
+  const message = record.message;
+
+  if (Array.isArray(message)) {
+    const text = message.filter((item) => typeof item === "string" && item.trim()).join(", ");
+    if (text) return text;
+  }
+  if (typeof message === "string" && message.trim()) return message;
+  if (typeof record.error === "string" && record.error.trim()) return record.error;
+
+  return fallback;
+}
+
 
 const STEPS = [
   { id: "camper", icon: User, label: "Camper Info" },
@@ -159,14 +180,30 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
     if (!formData.camper || !formData.parent || !formData.session || !formData.waiver) return;
     setIsSubmitting(true);
     try {
+      const pkgType = formData.session.packageType as PackageKey | undefined;
+      const session = {
+        ...formData.session,
+        session: formData.session.session ?? (pkgType ? PACKAGE_CONFIG[pkgType].session : undefined),
+      };
+
       // Convert string numeric fields to numbers for the backend
       const { ...restCamper } = formData.camper as Record<string, unknown>;
       const payload = {
-        ...formData,
+        idempotencyKey: formData.idempotencyKey,
         camper: {
           ...restCamper,
           height: formData.camper.height ? parseFloat(formData.camper.height) : undefined,
           weight: formData.camper.weight ? parseFloat(formData.camper.weight) : undefined,
+        },
+        parent: omitEmptyStrings(formData.parent as Record<string, unknown>),
+        session,
+        ...(formData.medical
+          ? { medical: omitEmptyStrings(formData.medical as Record<string, unknown>) }
+          : {}),
+        waiver: {
+          ...formData.waiver,
+          liabilityRelease: formData.waiver.liabilityRelease === true || formData.waiver.liabilityRelease === "true",
+          mediaRelease: formData.waiver.mediaRelease === "true" || formData.waiver.mediaRelease === true,
         },
       };
       const res = await fetch("/api/registrations", {
@@ -174,19 +211,28 @@ export function MultiStepForm({ locale }: MultiStepFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
+      let data: unknown;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("Registration failed. Please try again.");
+      }
       if (!res.ok) {
-        // Backend sends errors as 'message' (string or string[])
-        const errMsg = Array.isArray(data.message)
-          ? data.message.join(", ")
-          : data.message || data.error || "Failed to submit registration";
-        throw new Error(errMsg);
+        throw new Error(extractApiErrorMessage(data, "Failed to submit registration. Please try again."));
+      }
+      const result = data as { id?: string };
+      if (!result.id) {
+        throw new Error("Registration failed. Please try again.");
       }
       localStorage.removeItem(STORAGE_KEY);
-      router.push(`/payment/${data.id}`);
+      router.push(`/payment/${result.id}`);
     } catch (err: unknown) {
       console.error("Registration submit error:", err);
-      alert(err instanceof Error ? err.message : "An error occurred. Please try again.");
+      const message =
+        err instanceof Error && err.message.trim()
+          ? err.message
+          : "Registration failed. Please try again.";
+      alert(message);
       setIsSubmitting(false);
     }
   };
