@@ -124,7 +124,7 @@ export function AdminDashboardClient() {
         }),
       });
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         setSelected(null);
         setRejectReason("");
         setShowRejectInput(false);
@@ -135,7 +135,10 @@ export function AdminDashboardClient() {
         setTimeout(() => setNotification(null), 5000);
         fetchRegistrations();
       } else {
-        setNotification({ type: "error", message: data.message || "An error occurred." });
+        const errorMessage = Array.isArray(data.message)
+          ? data.message.join(", ")
+          : data.message || data.error || "An error occurred.";
+        setNotification({ type: "error", message: errorMessage });
         setTimeout(() => setNotification(null), 5000);
       }
     } catch {
@@ -478,6 +481,11 @@ export function AdminDashboardClient() {
               {/* Actions */}
               {selected.status !== "APPROVED" && selected.status !== "REJECTED" && (
                 <Section title="Actions">
+                  {selected.status === "PENDING_PAYMENT" && !selected.receiptUrl && (
+                    <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
+                      Payment receipt not uploaded yet. You can still reject this registration, or approve if payment was verified manually.
+                    </p>
+                  )}
                   {showRejectInput ? (
                     <div className="space-y-3">
                       <textarea

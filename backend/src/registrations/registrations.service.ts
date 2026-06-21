@@ -21,7 +21,11 @@ import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { FindAllQueryDto } from './dto/find-all-query.dto';
 
 const VALID_TRANSITIONS: Record<RegistrationStatus, RegistrationStatus[]> = {
-  PENDING_PAYMENT: [RegistrationStatus.UNDER_REVIEW],
+  PENDING_PAYMENT: [
+    RegistrationStatus.UNDER_REVIEW,
+    RegistrationStatus.APPROVED,
+    RegistrationStatus.REJECTED,
+  ],
   RECEIPT_UPLOADED: [
     RegistrationStatus.UNDER_REVIEW,
     RegistrationStatus.APPROVED,
